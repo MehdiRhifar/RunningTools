@@ -1,19 +1,22 @@
 import {Link} from "react-router-dom";
+import {CalculPacePage} from "../page/CalculPacePage.tsx";
+import {PercentagePage} from "../page/PercentagePage.tsx";
 
+export const routesConfig = [
+  { path: '/', label: 'Home', component: <CalculPacePage></CalculPacePage> },
+  { path: '/percentage', label: 'Percentage', component: <PercentagePage></PercentagePage> },
+  // { path: '/converter', label: 'Converter', component: ConverterPage },
+];
 export function NavBar() {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/map">Map</Link>
-        </li>
-        <li>
-          <Link to="/converter">Converter</Link>
-        </li>
-      </ul>
-    </nav>
+      <nav>
+        <ul>
+          {routesConfig.map(({ path, label }) => (
+              <li key={path}>
+                <Link to={path}>{label}</Link>
+              </li>
+          ))}
+        </ul>
+      </nav>
   );
 }

@@ -9,8 +9,7 @@ export function CalculPacePage() {
     const [paceSec, setPaceSec] = useState(0);
     const [speed, setSpeed] = useState(0);
 
-    const handleFormChange = useCallback((distance : number, hours : number, minutes : number, seconds : number) => {
-        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    const handleFormChange = useCallback((distance : number, totalSeconds : number) => {
         if (distance == 0 || totalSeconds == 0) {
             setSpeed(0); setPaceMin(0); setPaceSec(0)
             return;
