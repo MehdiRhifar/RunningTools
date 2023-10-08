@@ -1,38 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import MaskedInput from 'react-text-mask';
 import {parseIntSafe} from "../Utils.tsx";
+import {Time} from "../interface/Time.tsx";
 
 interface OnTimeChange {
-    onTimeChange: (totalSeconds: number) => void;
+    onTimeChange: (time: Time) => void;
 }
 
 function TimeInput({ onTimeChange }: OnTimeChange) {
-    const [time, setTime] = useState("");
-
-    useEffect(() => {
-        if (!onTimeChange) {
-            return;
-        }
-        if (time == "") {
-            onTimeChange(0)
-            return;
-        }
-        const timeSplit = time.split(':');
-        const [hours, minutes, seconds] = timeSplit.map(parseIntSafe)
-        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-        onTimeChange(totalSeconds);
-
-    }, [onTimeChange, time]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTime(event.target.value);
+
+        const timeSplit = event.target.value.split(':');
+        const [ hours, minutes, seconds ] = timeSplit.map(parseIntSafe);
+        const time : Time = {hours: hours, minutes: minutes, seconds: seconds}
+        onTimeChange(time);
     };
 
     return (
         <MaskedInput
             mask={[/[0-9]/, /[0-9]/, ':', /[0-5]/ , /[0-9]/, ':', /[0-5]/, /[0-9]/]}
             guide={true}
-            value={time}
             keepCharPositions={true}
             onChange={handleInputChange}
             placeholder="hh:mm:ss"

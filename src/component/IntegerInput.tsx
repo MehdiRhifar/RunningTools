@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import MaskedInput from "react-text-mask";
+import MaskedInput, {Mask} from "react-text-mask";
 import {createNumberMask} from "text-mask-addons";
 import {parseIntSafe} from "../Utils.tsx";
 
@@ -20,13 +20,16 @@ export function IntegerInput(
 
     };
 
-    const numberMask = createNumberMask({
+    const numberMask : Mask = createNumberMask({
         prefix : '',
-        thousandsSeparatorSymbol : " "
+        thousandsSeparatorSymbol : " ",
+        allowLeadingZeroes: false
+
     });
     return (
         <span>
             <MaskedInput
+                className={"custom-input"}
                 mask={numberMask}
                 value={numberStr}
                 onChange={handleNumberChange}

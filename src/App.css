@@ -40,3 +40,15 @@
 .read-the-docs {
   color: #888;
 }
+
+.custom-input {
+  border: 1px solid #5a5a5a;
+  border-radius: 4px;
+  padding: 0.5rem;
+  outline: none;
+}
+
+.custom-input:focus {
+  border: 1px solid #3182ce;
+  box-shadow: 0 0 3px rgba(49, 130, 206, 0.5);
+}

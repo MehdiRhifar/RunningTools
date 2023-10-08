@@ -1,20 +1,21 @@
 import {useEffect, useState} from "react";
 import TimeInput from "./TimeInput.tsx";
 import {IntegerInput} from "./IntegerInput.tsx";
+import {defaultTime, Time} from "../interface/Time.tsx";
 
 interface FormCalculPaceProps {
-    onFormChange: (distance : number, totalSeconds : number) => void;
+    onFormChange: (distance : number, time: Time) => void;
 }
 function FormCalculPace({ onFormChange } : FormCalculPaceProps) {
     const [distance, setDistance] = useState(0);
-    const [totalSeconds, setTotalSeconds] = useState(0)
+    const [time, setTime] = useState(defaultTime)
 
     useEffect(() => {
         onFormChange(
             distance,
-            totalSeconds
+            time
         );
-    }, [onFormChange, distance, totalSeconds])
+    }, [onFormChange, distance, time])
 
 
     return (
@@ -23,7 +24,7 @@ function FormCalculPace({ onFormChange } : FormCalculPaceProps) {
             <form>
                 <IntegerInput onIntegerChange={setDistance}></IntegerInput> Mètres <br /> <br/>
                 <label>Temps : </label>
-                <TimeInput onTimeChange={setTotalSeconds}></TimeInput>
+                <TimeInput onTimeChange={setTime}></TimeInput>
             </form>
         </>
     );
