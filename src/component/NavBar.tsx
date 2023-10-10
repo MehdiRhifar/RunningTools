@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import {CalculPacePage} from "../page/CalculPacePage.tsx";
-import {PercentagePage} from "../page/PercentagePage.tsx";
+import {PercentagePage} from "../page/PercentagePage/PercentagePage.tsx";
 
 export const routesConfig = [
   { path: '/', label: 'Home', component: <CalculPacePage></CalculPacePage> },

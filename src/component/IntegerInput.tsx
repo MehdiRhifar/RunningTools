@@ -5,12 +5,13 @@ import {parseIntSafe} from "../Utils.tsx";
 
 interface OnIntegerChange {
     onIntegerChange: (number: number) => void;
+    value? : number
 }
 
 export function IntegerInput(
-                    { onIntegerChange }: OnIntegerChange
+                    { onIntegerChange, value }: OnIntegerChange
                 ) {
-    const [numberStr, setNumberStr] = useState("0");
+    const [numberStr, setNumberStr] = useState<string>(value != undefined ? value.toString() : "0");
 
     const handleNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newNumberStr = event.target.value.replace(" ", "");

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import MaskedInput from 'react-text-mask';
 import {parseIntSafe} from "../Utils.tsx";
-import {defaultPace, Pace, toString} from "../interface/Pace.tsx";
+import {defaultPace, Pace, paceToString} from "../interface/Pace.tsx";
 
 interface OnPaceChange {
     onTimeChange: (pace: Pace) => void,
@@ -11,30 +11,34 @@ interface OnPaceChange {
 export function PaceInput(
     { onTimeChange, pace }: OnPaceChange
 ) {
-    const [timeStr, setTimeStr] = useState(toString(defaultPace))
+    const [timeStr, setTimeStr] = useState(paceToString(defaultPace))
 
     const isEditLocal = useRef(true);
 
     useEffect(() => {
-        console.log(pace, isEditLocal)
         if (isEditLocal.current) {
             isEditLocal.current = false
             return
         }
         if (pace) {
-            setTimeStr(toString(pace));
+            setTimeStr(paceToString(pace));
         }
     }, [pace]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         setTimeStr(event.target.value)
+        if(event.target.value == "") {
+            isEditLocal.current = true;
+            onTimeChange(defaultPace);
+            return
+        }
+
         const value = event.target.value.replace("'", "").replace("_", "0")
         const timeSplit = value.split('"');
         const [minutes, seconds] = timeSplit.map(parseIntSafe)
         const pace2 : Pace = {minutes : minutes, seconds : seconds}
         isEditLocal.current = true;
-
         onTimeChange(pace2);
     };
 

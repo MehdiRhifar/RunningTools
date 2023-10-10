@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
 import FormCalculPace from "../component/FormCalculPace.tsx";
-import {defaultPace, isZero, Pace, toSpeed, toString} from "../interface/Pace.tsx";
+import {defaultPace, isZero, Pace, toSpeed, paceToString} from "../interface/Pace.tsx";
 import {Time, toPace} from "../interface/Time.tsx";
 
 export function CalculPacePage() {
@@ -26,7 +26,7 @@ export function CalculPacePage() {
         <>
             <FormCalculPace onFormChange={handleFormChange}></FormCalculPace>
             <p>
-                {speed.toFixed(2)} km/h - {toString(pace)}
+                {speed.toFixed(2)} km/h - {paceToString(pace)}
             </p>
         </>
     );
