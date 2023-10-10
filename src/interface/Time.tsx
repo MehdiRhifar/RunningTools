@@ -1,5 +1,5 @@
 import {Pace} from "./Pace.tsx";
-import {secPerKmToPace} from "../Utils.tsx";
+import {formatTime, totalSecondsToPace} from "../Utils.tsx";
 
 export interface Time {
     hours : number
@@ -25,5 +25,9 @@ export function toPace(time : Time, distanceMetre : number): Pace {
     const secPerMetre = totalSeconds(time) / distanceMetre;
     const secPerKm = secPerMetre * 1000;
 
-    return secPerKmToPace(secPerKm)
+    return totalSecondsToPace(secPerKm)
+}
+
+export function timeToString(time : Time) {
+    return formatTime(time.hours) + ":" + formatTime(time.minutes) + ':' + formatTime(time.seconds)
 }

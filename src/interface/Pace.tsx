@@ -1,3 +1,6 @@
+import {Time} from "./Time.tsx";
+import {formatTime, totalSecondsToTime} from "../Utils.tsx";
+
 export interface Pace {
     minutes : number,
     seconds : number
@@ -17,14 +20,16 @@ export function toSpeed(pace : Pace) : number {
     return speed == 0 ? 0 : 3600 / speed
 }
 
+export function toTime(distance : number, pace : Pace) : Time {
+    return totalSecondsToTime( (totalSeconds(pace) * distance)  / 1000)
+}
+
 export function isZero(pace : Pace) : boolean {
     return pace.minutes == 0 && pace.seconds == 0;
 }
 
-function formatTime (value: number) {
-    return String(value).padStart(2, '0');
-}
 
-export function toString(pace : Pace) : string {
+
+export function paceToString(pace : Pace) : string {
     return formatTime(pace.minutes) + '"' + formatTime(pace.seconds)+"'"
 }

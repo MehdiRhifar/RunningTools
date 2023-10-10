@@ -16,10 +16,9 @@ export function FloatInput(
             isEditLocal.current = false
             return
         }
-        if (value) {
+        if (value != undefined) {
             setNumberStr(value.toFixed(2));
         }
-
     }, [value]);
 
     const handleNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
