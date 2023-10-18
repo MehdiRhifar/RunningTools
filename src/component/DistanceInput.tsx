@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import {parseIntSafe} from "../Utils.tsx";
+import React, {useState} from 'react';
+import {getKeys, parseIntSafe} from "../Utils/Utils.tsx";
 import MaskedInput, {Mask} from "react-text-mask";
 import {createNumberMask} from "text-mask-addons";
+import {distancesInfo} from "../Utils/Constants.tsx";
 
 interface OnIntegerChange {
     onIntegerChange: (number: number) => void;
@@ -12,10 +13,23 @@ export function DistanceInput({ onIntegerChange, value }: OnIntegerChange) {
         value !== undefined ? value.toString() : ''
     );
 
+    const [number, setNumber] = useState<number>(
+        value !== undefined ? value : 0
+    )
+
+    const thousandsSeparatorSymbol : string = Number(1000).toLocaleString().charAt(1)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const numberMask: Mask = createNumberMask({
+        prefix: '',
+        thousandsSeparatorSymbol: thousandsSeparatorSymbol, //Symbole de séparation des milier en fonction de la langue du PC
+        allowLeadingZeroes: false
+    });
+
     const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newNumberStr = event.target.value.replace(' ', '');
+        const newNumberStr = event.target.value.replace(thousandsSeparatorSymbol, "")
         const newNumber = parseIntSafe(newNumberStr);
-        setNumberStr(newNumberStr);
+        setNumberStr(event.target.value);
+        setNumber(newNumber)
         onIntegerChange(newNumber);
     };
 
@@ -23,21 +37,9 @@ export function DistanceInput({ onIntegerChange, value }: OnIntegerChange) {
         const distance = parseIntSafe(event.target.value)
         const selectedValue = distance.toLocaleString();
         setNumberStr(selectedValue); // Mettez à jour la valeur de l'input avec la sélection
+        setNumber(distance)
         onIntegerChange(distance);
     };
-
-    const predefinedValues = new Map([
-        ["10km", 10_000],
-        ["Marathon", 42_195],
-        ["Semi", 21_975]
-    ])
-
-    const numberMask: Mask = createNumberMask({
-        prefix: '',
-        thousandsSeparatorSymbol: `\u00A0`,
-        allowLeadingZeroes: false
-
-    });
 
     return (
         <div>
@@ -48,16 +50,17 @@ export function DistanceInput({ onIntegerChange, value }: OnIntegerChange) {
                 onChange={handleNumberChange}
             />mètre |
             <select
-                value={numberStr}
+                value={number}
                 onChange={handleSelectChange}
-                className="custom-input w-52 m-1"
-            >
+                className="custom-input w-56 m-1">
                 <option value="">Sélectionnez une valeur</option>
-                {Array.from(predefinedValues).map(([key, distance]) => (
-                    <option key={key} value={distance}>
-                        {key}
-                    </option>
-                ))}
+                {
+                    getKeys(distancesInfo).map((key) =>
+                            <option key={key} value={distancesInfo[key].distance}>
+                                {distancesInfo[key].name}
+                            </option>
+                    )
+                }
             </select>
         </div>
     )

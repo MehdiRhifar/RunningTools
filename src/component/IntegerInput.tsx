@@ -1,7 +1,7 @@
 import { useState, ChangeEvent } from 'react';
 import MaskedInput, {Mask} from "react-text-mask";
 import {createNumberMask} from "text-mask-addons";
-import {parseIntSafe} from "../Utils.tsx";
+import {parseIntSafe} from "../Utils/Utils.tsx";
 
 interface OnIntegerChange {
     onIntegerChange: (number: number) => void;

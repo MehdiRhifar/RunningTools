@@ -1,5 +1,5 @@
 import {Time} from "./Time.tsx";
-import {formatTime, totalSecondsToTime} from "../Utils.tsx";
+import {formatTime, totalSecondsToTime} from "../Utils/Utils.tsx";
 
 export interface Pace {
     minutes : number,
