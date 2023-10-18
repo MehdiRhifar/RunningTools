@@ -1,10 +1,10 @@
-import { useReducer } from 'react';
-import { FloatInput } from '../../component/FloatInput.tsx';
-import { PaceInput } from '../../component/PaceInput.tsx';
-import { defaultPace, Pace, paceToString } from '../../interface/Pace.tsx';
-import { IntegerInput } from '../../component/IntegerInput.tsx';
-import { defaultTime, timeToString } from '../../interface/Time.tsx';
-import { DistanceInput } from '../../component/DistanceInput.tsx';
+import {useReducer} from 'react';
+import {FloatInput} from '../../component/FloatInput.tsx';
+import {PaceInput} from '../../component/PaceInput.tsx';
+import {defaultPace, Pace, paceToString} from '../../interface/Pace.tsx';
+import {IntegerInput} from '../../component/IntegerInput.tsx';
+import {defaultTime, timeToString} from '../../interface/Time.tsx';
+import {DistanceInput} from '../../component/DistanceInput.tsx';
 import {PercentageActionType, percentageReducer} from "./Percentage.reducer.ts";
 
 export function PercentagePage() {

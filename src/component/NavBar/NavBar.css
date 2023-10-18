@@ -1,22 +1,14 @@
 /* Navbar.css */
 
-.navbar {
-    background: #000; /* Fond noir */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre douce */
-}
-
 .navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    /*height: 100vh;*/
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 1em;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Ombre douce */
+    background: #232323;
 }
 
 .navbar-logo {
@@ -26,23 +18,26 @@
 }
 
 .navbar-menu {
-    list-style: none;
     display: flex;
-    margin: 0;
+    list-style: none;
+    flex-direction: column;
     padding: 0;
+    /*margin-top: 20px; !* Espace entre le logo et les éléments *!*/
 }
 
 .navbar-item {
-    margin-right: 20px;
+    border: 1px solid #555;
+    padding: 2em;
 }
 
 .navbar-link {
+    /*padding: 5em;*/
     color: #fff; /* Texte blanc */
     text-decoration: none;
     font-size: 16px;
     transition: color 0.3s;
 }
 
-.navbar-link:hover {
+.navbar-item:hover .navbar-link {
     color: #00f; /* Texte bleu lorsqu'il est survolé */
 }

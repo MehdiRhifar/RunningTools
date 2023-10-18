@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import {ChangeEvent, useState} from 'react';
 import MaskedInput, {Mask} from "react-text-mask";
 import {createNumberMask} from "text-mask-addons";
 import {parseIntSafe} from "../Utils/Utils.tsx";

@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
 import FormCalculPace from "../component/FormCalculPace.tsx";
-import {defaultPace, isZero, Pace, toSpeed, paceToString} from "../interface/Pace.tsx";
-import {Time, toPace} from "../interface/Time.tsx";
+import {defaultPace, isZero, Pace, paceToString, toSpeed} from "../interface/Pace.tsx";
+import {Time, timeToPace} from "../interface/Time.tsx";
 
 export function CalculPacePage() {
 
@@ -17,7 +17,7 @@ export function CalculPacePage() {
             return;
         }
 
-        const newPace = toPace(time, distanceMeter)
+        const newPace = timeToPace(time, distanceMeter)
         setPace(newPace)
         setSpeed(toSpeed(newPace));
     }, []);
