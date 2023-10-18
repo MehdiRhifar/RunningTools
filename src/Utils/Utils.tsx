@@ -1,5 +1,5 @@
-import {Pace} from "./interface/Pace.tsx";
-import {Time} from "./interface/Time.tsx";
+import {Pace} from "../interface/Pace.tsx";
+import {Time, totalSeconds} from "../interface/Time.tsx";
 
 export const parseIntSafe = (str : string) : number => {
     return parseInt(str) || 0;
@@ -46,3 +46,10 @@ export function speedToSecondsKm(speed : number) {
     }
     return 3600 / speed;
 }
+
+export function equivalent(referenceTime : Time, referenceDistance : number, goalDistance : number) : Time {
+    const factor = Math.pow((goalDistance / referenceDistance), 1.06)
+    return totalSecondsToTime(totalSeconds(referenceTime) * factor)
+}
+
+export const getKeys = Object.keys as <T extends object>(obj: T) => Array<keyof T>

@@ -1,5 +1,5 @@
 import {Pace} from "./Pace.tsx";
-import {formatTime, totalSecondsToPace} from "../Utils.tsx";
+import {formatTime, totalSecondsToPace} from "../Utils/Utils.tsx";
 
 export interface Time {
     hours : number
@@ -17,7 +17,7 @@ export function isZero(time : Time) : boolean {
     return time.hours == 0 && time.minutes == 0 && time.seconds == 0;
 }
 
-function totalSeconds(time : Time) {
+export function totalSeconds(time : Time) {
     return time.hours * 3600 + time.minutes * 60 + time.seconds;
 }
 

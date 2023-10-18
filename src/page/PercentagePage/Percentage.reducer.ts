@@ -2,7 +2,7 @@
 import {Pace, toSpeed, toTime} from "../../interface/Pace.js";
 import {toPace} from "../../Utils.js";
 import {defaultPace, Pace, toSpeed, totalSeconds, toTime} from "../../interface/Pace.js";
-import {toPace, totalSecondsToPace} from "../../Utils.js";
+import {toPace, totalSecondsToPace} from "../../Utils/Utils.tsx";
 import {Time} from "../../interface/Time.tsx";
 
 export interface PercentagePageState {

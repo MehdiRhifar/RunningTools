@@ -1,0 +1,48 @@
+/* Navbar.css */
+
+.navbar {
+    background: #000; /* Fond noir */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre douce */
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.navbar-logo {
+    color: #fff; /* Texte blanc */
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-item {
+    margin-right: 20px;
+}
+
+.navbar-link {
+    color: #fff; /* Texte blanc */
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.navbar-link:hover {
+    color: #00f; /* Texte bleu lorsqu'il est survolé */
+}

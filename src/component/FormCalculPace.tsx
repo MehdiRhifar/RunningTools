@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import TimeInput from "./TimeInput.tsx";
 import {IntegerInput} from "./IntegerInput.tsx";
 import {defaultTime, Time} from "../interface/Time.tsx";
+import {TimeInput} from "./TimeInput.tsx";
 
 interface FormCalculPaceProps {
     onFormChange: (distance : number, time: Time) => void;

@@ -40,8 +40,8 @@ export function PercentagePage() {
                     <IntegerInput onIntegerChange={handlePercent} value={state.percent} /> %
                 </div>
                 <div>
-                    <FloatInput onNumberChange={handleSpeed} value={state.speed} />
-                    km/h <PaceInput onTimeChange={handlePace} pace={state.pace} /> / km
+                    <FloatInput onNumberChange={handleSpeed} value={state.speed} /> km/h
+                    <PaceInput onTimeChange={handlePace} pace={state.pace} /> / km
                 </div>
                 <div>
                     {state.speedPercent.toFixed(2)} km/h - {paceToString(state.pacePercent)}
