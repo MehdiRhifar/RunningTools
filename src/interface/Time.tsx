@@ -17,12 +17,12 @@ export function isZero(time : Time) : boolean {
     return time.hours == 0 && time.minutes == 0 && time.seconds == 0;
 }
 
-export function totalSeconds(time : Time) {
+export function timeToTotalSeconds(time : Time) {
     return time.hours * 3600 + time.minutes * 60 + time.seconds;
 }
 
 export function timeToPace(time : Time, distanceMetre : number): Pace {
-    const secPerMetre = totalSeconds(time) / distanceMetre;
+    const secPerMetre = timeToTotalSeconds(time) / distanceMetre;
     const secPerKm = secPerMetre * 1000;
 
     return totalSecondsToPace(secPerKm)

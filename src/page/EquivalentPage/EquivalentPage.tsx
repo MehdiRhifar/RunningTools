@@ -1,9 +1,10 @@
 import {useState} from "react";
 import {defaultTime, Time, timeToPace} from "../../interface/Time.tsx";
 import {TimeInput} from "../../component/TimeInput.tsx";
-import {equivalent, equivalentPurdyPoint, getKeys} from "../../Utils/Utils.tsx";
+import {equivalent, equivalentPurdyPointV2, getKeys} from "../../Utils/Utils.tsx";
 import {Distance, DistanceInfo, distancesInfo} from "../../Utils/Constants.tsx";
 import {paceToString} from "../../interface/Pace.tsx";
+import {calculatePurdyPoints, equivalentPurdyPoint, purdyPointV2} from "../../Utils/PurdyPoints.tsx";
 
 export function EquivalentPage() {
 
@@ -21,13 +22,19 @@ export function EquivalentPage() {
 
         getKeys(distancesInfo).map(key => {
             if (key === distance) {
-                updatedTimes[key as keyof DistanceInfo] = newValue;
+                updatedTimes[key] = newValue;
             } else {
-                updatedTimes[key as keyof DistanceInfo] = equivalentPurdyPoint(
-                    newValue,
-                    distancesInfo[distance].distance,
-                    distancesInfo[key].distance
-                );
+                updatedTimes[key] = equivalentPurdyPoint(
+                    calculatePurdyPoints(distancesInfo[distance].distance, newValue),
+                    distancesInfo[key].distance);
+                console.log(
+                    equivalentPurdyPoint(calculatePurdyPoints(distancesInfo[distance].distance, newValue),
+                        distancesInfo[key].distance),
+                    equivalent(
+                        newValue,
+                        distancesInfo[distance].distance,
+                        distancesInfo[key].distance
+                    ));
             }
         })
 
