@@ -1,7 +1,8 @@
 import {useCallback, useState} from "react";
 import FormCalculPace from "../component/FormCalculPace.tsx";
 import {defaultPace, isZero, Pace, paceToString, toSpeed} from "../interface/Pace.tsx";
-import {Time, timeToPace} from "../interface/Time.tsx";
+import {defaultTime, Time, timeToPace} from "../interface/Time.tsx";
+import {TimeCalculator} from "../component/TimeCalculator.tsx";
 
 export function CalculPacePage() {
 
@@ -9,8 +10,12 @@ export function CalculPacePage() {
 
     const [pace, setPace] = useState<Pace>(defaultPace)
     const [speed, setSpeed] = useState(0);
+    const [distance, setDistance] = useState(0);
+    const [time, setTime] = useState(defaultTime);
 
     const handleFormChange = useCallback((distanceMeter : number, time : Time) => {
+        setDistance(distanceMeter)
+        setTime(time)
         if (distanceMeter == 0 || isZero(time)) {
             setSpeed(0);
             setPace(defaultPace)
@@ -28,6 +33,8 @@ export function CalculPacePage() {
             <p>
                 {speed.toFixed(2)} km/h - {paceToString(pace)}
             </p>
+
+            <TimeCalculator distance={distance} time={time}></TimeCalculator>
         </>
     );
 }
