@@ -2,41 +2,60 @@ import {useState} from "react";
 import {defaultTime, Time, timeToPace} from "../../interface/Time.tsx";
 import {TimeInput} from "../../component/TimeInput.tsx";
 import {getKeys} from "../../Utils/Utils.tsx";
-import {Distance, DistanceInfo, distancesInfo} from "../../Utils/Constants.tsx";
+import {defaultDistanceTime, Distance, DistanceInfo, distancesInfo} from "../../Utils/Constants.tsx";
 import {paceToString} from "../../interface/Pace.tsx";
-import {equivalentPurdyPoint, equivalentPurdyPointV2, purdyPoints, purdyPointV2} from "../../Utils/PurdyPoints.tsx";
+import {equivalentPurdyPoint, purdyPoints} from "../../Utils/PurdyPoints.tsx";
+import {IntegerInput} from "../../component/IntegerInput.tsx";
 
 export function EquivalentPage() {
 
-    const [times, setTimes] = useState<Distance<Time>>({
-        Marathon: defaultTime,
-        SemiMarathon: defaultTime,
-        km10: defaultTime,
-        km5: defaultTime,
-        km3: defaultTime
-    })
+    const [purdyPoint, setPurdyPoint] = useState(0)
+    const [times, setTimes] = useState<Distance<Time>>(
+        defaultDistanceTime
+    )
+    const [custom, setCustom] = useState(
+        {
+            distance : 0,
+            time : defaultTime
+        }
+    )
 
-    const handleTimeChange = (distance: keyof DistanceInfo, newValue: Time) => {
-
+    const updateTimes = (newPurdyPoint : number) => {
         const updatedTimes: Record<keyof DistanceInfo, Time> = {...times}
+        setPurdyPoint(newPurdyPoint)
 
         getKeys(distancesInfo).map(key => {
-            if (key === distance) {
-                updatedTimes[key] = newValue;
-            } else {
-                updatedTimes[key] = equivalentPurdyPoint(
-                    purdyPoints(distancesInfo[distance].distance, newValue),
-                    distancesInfo[key].distance);
-                console.log(
-                    equivalentPurdyPoint(purdyPoints(distancesInfo[distance].distance, newValue),
-                        distancesInfo[key].distance),
-                    equivalentPurdyPointV2(purdyPointV2(distancesInfo[distance].distance, newValue),
-                        distancesInfo[key].distance)
+            updatedTimes[key] = equivalentPurdyPoint(
+                newPurdyPoint,
+                distancesInfo[key].distance);
+        })
+        return updatedTimes;
+    }
+
+    const handleCustomDistanceChange = (newDistance : number) => {
+        setCustom(
+            {
+                distance: newDistance,
+                time: equivalentPurdyPoint(
+                    purdyPoint,
+                    newDistance
                 )
             }
-        })
+        )
+    }
 
-        setTimes(updatedTimes)
+    const handleTimeChange = (distance: number, newTime: Time) => {
+        const newPurdyPoint = purdyPoints(distance, newTime)
+        setTimes(updateTimes(newPurdyPoint))
+
+        setCustom(
+            {distance: custom.distance,
+                time: equivalentPurdyPoint(
+                    newPurdyPoint,
+                    custom.distance
+                )
+            }
+        )
     }
 
 
@@ -61,7 +80,7 @@ export function EquivalentPage() {
                                 <TimeInput
                                     value={times[distance]}
                                     onTimeChange={(newValue) => {
-                                        handleTimeChange(distance, newValue);
+                                        handleTimeChange(distancesInfo[distance].distance, newValue);
                                     }}
                                 />
                             </td>
@@ -75,6 +94,26 @@ export function EquivalentPage() {
                         </tr>
                     )
                 })}
+                <tr key={"custom"}>
+                    <td>
+                        <IntegerInput onIntegerChange={handleCustomDistanceChange}></IntegerInput>
+                    </td>
+                    <td>
+                        <TimeInput
+                            value={custom.time}
+                            onTimeChange={(newValue) => {
+                                handleTimeChange(custom.distance, newValue);
+                            }}
+                        />
+                    </td>
+                    <td>
+                        {
+                            paceToString(
+                                timeToPace(custom.time, custom.distance)
+                            )
+                        }
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </>

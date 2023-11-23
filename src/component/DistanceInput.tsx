@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {getKeys, parseIntSafe} from "../Utils/Utils.tsx";
+import {getKeys, parseIntSafe, thousandsSeparatorSymbol} from "../Utils/Utils.tsx";
 import MaskedInput, {Mask} from "react-text-mask";
 import {createNumberMask} from "text-mask-addons";
 import {distancesInfo} from "../Utils/Constants.tsx";
@@ -17,7 +17,6 @@ export function DistanceInput({ onIntegerChange, value }: OnIntegerChange) {
         value !== undefined ? value : 0
     )
 
-    const thousandsSeparatorSymbol : string = Number(1000).toLocaleString().charAt(1)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const numberMask: Mask = createNumberMask({
         prefix: '',
@@ -48,7 +47,7 @@ export function DistanceInput({ onIntegerChange, value }: OnIntegerChange) {
                 mask={numberMask}
                 value={numberStr}
                 onChange={handleNumberChange}
-            />mètre |
+            />mètres |
             <select
                 value={number}
                 onChange={handleSelectChange}

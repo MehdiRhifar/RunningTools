@@ -1,4 +1,7 @@
-import {Time, timeToString, timeToTotalSeconds} from "../interface/Time.tsx";
+import {Time, timeToStringMinimalist, timeToTotalSeconds} from "../interface/Time.tsx";
+import {useEffect, useState} from "react";
+import {IntegerInput} from "./IntegerInput.tsx";
+import {totalSecondsToTime} from "../Utils/Utils.tsx";
 
 type TimeCalculatorProps = {
   distance: number;
@@ -6,32 +9,19 @@ type TimeCalculatorProps = {
 };
 
 export function TimeCalculator({ distance, time }: TimeCalculatorProps) {
-    const timeSec = timeToTotalSeconds(time)
-  const calculatePassingTimes = () => {
-      const timeInHours = timeSec / 3600; // Convert time to hours
-      const timeInMinutes = timeSec / 60; // Convert time to minutes
+    const [input, setInput] = useState(0)
+    const [secondsPassage, setSecondsPassage] = useState(0)
 
-    const time100m = (100 * timeSec) /  distance;
-    const time200m = (200 * timeSec) /  distance;
-    const time400m = (400 * timeSec) /  distance;
+    useEffect(() => {
+        setSecondsPassage( (input * timeToTotalSeconds(time)) / distance )
+    }, [input, distance, time]);
 
-    return {
-      time100m,
-      time200m,
-      time400m,
-    };
-  };
-
-  const passingTimes = calculatePassingTimes();
 
   return (
-    <div>
+    <div className="p-2">
       <h2>Temps de passage</h2>
-      <p>Distance: {distance} m</p>
-      <p>Temps: {timeToString(time)} secondes</p>
-      <p>Temps de passage au 100m : {passingTimes.time100m.toFixed(2)} seconds</p>
-      <p>Temps de passage au 200m : {passingTimes.time200m.toFixed(2)} seconds</p>
-      <p>Temps de passage au 400m : {passingTimes.time400m.toFixed(2)} seconds</p>
+        <IntegerInput onIntegerChange={setInput}></IntegerInput>
+      <p>Temps de passage au {input.toLocaleString()}m : {timeToStringMinimalist(totalSecondsToTime(secondsPassage))}</p>
     </div>
   );
 }

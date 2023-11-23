@@ -29,5 +29,15 @@ export function timeToPace(time : Time, distanceMetre : number): Pace {
 }
 
 export function timeToString(time : Time) {
-    return formatTime(time.hours) + ":" + formatTime(time.minutes) + ':' + formatTime(time.seconds)
+        return formatTime(time.hours) + ":" + formatTime(time.minutes) + ':' + formatTime(time.seconds)
+}
+
+export function timeToStringMinimalist(time : Time) {
+    if (time.hours > 0) {
+        return formatTime(time.hours) + ":" + formatTime(time.minutes) + ':' + formatTime(time.seconds)
+    }
+    else if (time.minutes > 0) {
+        return formatTime(time.minutes) + ':' + formatTime(time.seconds)
+    }
+    return formatTime(time.seconds) + " secondes"
 }

@@ -2,13 +2,18 @@ import {Pace} from "../interface/Pace.tsx";
 import {Time, timeToTotalSeconds} from "../interface/Time.tsx";
 
 export const parseIntSafe = (str : string) : number => {
-    return parseInt(str) || 0;
+    return parseInt(str.replace(thousandsSeparatorSymbol, "")) || 0;
 }
 
 export function formatTime (value: number) {
-    return String(value).padStart(2, '0');
+    return isNaN(value) ? '00' : String(value).padStart(2, '0');
 }
 
+export const thousandsSeparatorSymbol : string = Number(1000).toLocaleString().charAt(1)
+
+export function toLocaleString(value : number) {
+    return Number(value).toLocaleString()
+}
 export function secondsKmToKmHours(totalSeconds : number) {
     if (totalSeconds == 0) {
         return 0;
@@ -35,7 +40,6 @@ export function totalSecondsToTime(totalSeconds : number) : Time {
         seconds : Math.round(totalSeconds2 % 60)
     }
 }
-
 
 
 export function toPace(speed : number) : Pace {

@@ -1,7 +1,7 @@
 import {ChangeEvent, useState} from 'react';
 import MaskedInput, {Mask} from "react-text-mask";
 import {createNumberMask} from "text-mask-addons";
-import {parseIntSafe} from "../Utils/Utils.tsx";
+import {parseIntSafe, thousandsSeparatorSymbol} from "../Utils/Utils.tsx";
 
 interface OnIntegerChange {
     onIntegerChange: (number: number) => void;
@@ -21,20 +21,20 @@ export function IntegerInput(
 
     };
 
+    // Cant do anything to type this
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const numberMask : Mask = createNumberMask({
         prefix : '',
-        thousandsSeparatorSymbol : " ",
+        thousandsSeparatorSymbol : thousandsSeparatorSymbol,
         allowLeadingZeroes: false
 
     });
     return (
-        <span>
-            <MaskedInput
-                className={"custom-input"}
-                mask={numberMask}
-                value={numberStr}
-                onChange={handleNumberChange}
-            />
-        </span>
+        <MaskedInput
+            className={"custom-input"}
+            mask={numberMask}
+            value={numberStr}
+            onChange={handleNumberChange}
+        />
     );
 }
