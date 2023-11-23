@@ -1,41 +1,40 @@
 import {useCallback, useState} from "react";
 import FormCalculPace from "../component/FormCalculPace.tsx";
+import {defaultPace, isZero, Pace, paceToString, toSpeed} from "../interface/Pace.tsx";
+import {defaultTime, Time, timeToPace} from "../interface/Time.tsx";
+import {TimeCalculator} from "../component/TimeCalculator.tsx";
 
 export function CalculPacePage() {
 
     // const url : string = "/"
 
-    const [paceMin, setPaceMin] = useState(0);
-    const [paceSec, setPaceSec] = useState(0);
+    const [pace, setPace] = useState<Pace>(defaultPace)
     const [speed, setSpeed] = useState(0);
+    const [distance, setDistance] = useState(0);
+    const [time, setTime] = useState(defaultTime);
 
-    const handleFormChange = useCallback((distance : number, hours : number, minutes : number, seconds : number) => {
-        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-        if (distance == 0 || totalSeconds == 0) {
-            setSpeed(0); setPaceMin(0); setPaceSec(0)
+    const handleFormChange = useCallback((distanceMeter : number, time : Time) => {
+        setDistance(distanceMeter)
+        setTime(time)
+        if (distanceMeter == 0 || isZero(time)) {
+            setSpeed(0);
+            setPace(defaultPace)
             return;
         }
 
-        const secPerMetre = totalSeconds / distance;
-        const kmPerMetre = secPerMetre * 1000;
-
-        setPaceMin(Math.floor(kmPerMetre / 60));
-        setPaceSec(Math.round(kmPerMetre % 60));
-
-        const newSpeed = (distance*36)/(10*totalSeconds);
-        setSpeed(newSpeed);
+        const newPace = timeToPace(time, distanceMeter)
+        setPace(newPace)
+        setSpeed(toSpeed(newPace));
     }, []);
-
-    const formatTime = (value: number) => {
-        return String(value).padStart(2, '0');
-    };
 
     return (
         <>
             <FormCalculPace onFormChange={handleFormChange}></FormCalculPace>
             <p>
-                {speed.toFixed(2)} km/h - {formatTime(paceMin)+'"'}{formatTime(paceSec)+"'"}
+                {speed.toFixed(2)} km/h - {paceToString(pace)}
             </p>
+
+            <TimeCalculator distance={distance} time={time}></TimeCalculator>
         </>
     );
 }
