@@ -35,6 +35,7 @@ export function PercentagePage() {
 
     return (
         <>
+            <title>percentage</title>
             <div className={'m-10'}>
                 <div>
                     <IntegerInput onIntegerChange={handlePercent} value={state.percent} /> %
