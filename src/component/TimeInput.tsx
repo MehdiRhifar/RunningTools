@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { parseIntSafe } from '../Utils/Utils.tsx'
 import { defaultTime, Time, timeToString } from '../interface/Time.tsx'
 
@@ -17,13 +17,7 @@ interface OnTimeChange {
 export function TimeInput({ onTimeChange, value }: OnTimeChange) {
   const [timeStr, setTimeStr] = useState(timeToString(defaultTime))
 
-  const isEditLocal = useRef(true)
-
   useEffect(() => {
-    if (isEditLocal.current) {
-      isEditLocal.current = false
-      return
-    }
     if (value) {
       setTimeStr(timeToString(value))
     }
