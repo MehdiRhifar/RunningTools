@@ -1,55 +1,73 @@
-import React, {useEffect, useRef, useState} from 'react';
-import MaskedInput from 'react-text-mask';
-import {parseIntSafe} from "../Utils/Utils.tsx";
-import {defaultTime, Time, timeToString} from "../interface/Time.tsx";
+import React, { useEffect, useRef, useState } from 'react'
+import { parseIntSafe } from '../Utils/Utils.tsx'
+import { defaultTime, Time, timeToString } from '../interface/Time.tsx'
+
+import { useMaskito } from '@maskito/react'
+import {
+  maskitoTimeOptionsGenerator,
+  maskitoWithPlaceholder,
+} from '@maskito/kit'
+import { MaskitoOptions } from '@maskito/core'
 
 interface OnTimeChange {
-    value?: Time
-    onTimeChange: (time: Time) => void;
+  value?: Time
+  onTimeChange: (time: Time) => void
 }
 
 export function TimeInput({ onTimeChange, value }: OnTimeChange) {
+  const [timeStr, setTimeStr] = useState(timeToString(defaultTime))
 
-    const [timeStr, setTimeStr] = useState(timeToString(defaultTime));
+  const isEditLocal = useRef(true)
 
-    const isEditLocal = useRef(true);
+  useEffect(() => {
+    if (isEditLocal.current) {
+      isEditLocal.current = false
+      return
+    }
+    if (value) {
+      setTimeStr(timeToString(value))
+    }
+  }, [value])
 
-    useEffect(() => {
-        if (isEditLocal.current) {
-            isEditLocal.current = false
-            return
-        }
-        if (value) {
-            setTimeStr(timeToString(value));
-        }
-    }, [value]);
+  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    setTimeStr(value)
+    const [hours, minutes, seconds] = value.split(':').map(parseIntSafe)
+    onTimeChange({ hours, minutes, seconds })
+  }
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const timeOption = maskitoTimeOptionsGenerator({
+    mode: 'HH:MM:SS',
+    timeSegmentMaxValues: { hours: 99 },
+  })
 
-        setTimeStr(event.target.value)
-        isEditLocal.current = true
+  const {
+    plugins, // plugins keeps caret inside actual value and remove placeholder on blur
+    ...placeholderOptions
+    // pass 'true' as second argument to add plugin to hide placeholder when input is not focused
+  } = maskitoWithPlaceholder('00:00:00', false)
 
-        if(event.target.value == "") {
-            onTimeChange(defaultTime);
-            return
-        }
+  const optionWithPlace = {
+    ...timeOption,
+    plugins: timeOption.plugins.concat(),
+    preprocessors: [...timeOption.preprocessors],
+    postprocessors: [
+      ...timeOption.postprocessors,
+      // Always put it AFTER all other postprocessors
+      ...placeholderOptions.postprocessors,
+    ],
+  } as Required<MaskitoOptions>
 
-        const value = event.target.value.replace("_", "0")
-        const timeSplit = value.split(':');
-        const [ hours, minutes, seconds ] = timeSplit.map(parseIntSafe);
-        const time : Time = {hours: hours, minutes: minutes, seconds: seconds}
-        onTimeChange(time);
-    };
+  const maskedInputRef = useMaskito({ options: optionWithPlace })
 
-    return (
-        <MaskedInput
-            className={"custom-input"}
-            mask={[/[0-9]/, /[0-9]/, ':', /[0-5]/ , /[0-9]/, ':', /[0-5]/, /[0-9]/]}
-            value={timeStr}
-            guide={true}
-            keepCharPositions={true}
-            onChange={handleInputChange}
-            placeholder="hh:mm:ss"
-        />
-    );
+  return (
+    <>
+      <input
+        className={'custom-input'}
+        ref={maskedInputRef}
+        value={timeStr}
+        onInput={onInputChange}
+      />
+    </>
+  )
 }

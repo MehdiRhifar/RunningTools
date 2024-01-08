@@ -1,24 +1,38 @@
-import {Link} from "react-router-dom";
-import {CalculPacePage} from "../../page/CalculPacePage.tsx";
-import {PercentagePage} from "../../page/PercentagePage/PercentagePage.tsx";
-import {EquivalentPage} from "../../page/EquivalentPage/EquivalentPage.tsx";
-import "./NavBar.css"
+import { Link } from 'react-router-dom'
+import { TimeToPacePage } from '../../page/TimeToPacePage/TimeToPacePage.tsx'
+import { PaceToTimePage } from '../../page/PercentagePage/PaceToTimePage.tsx'
+import { EquivalentPage } from '../../page/EquivalentPage/EquivalentPage.tsx'
+import './NavBar.css'
 
 export const routesConfig = [
-  { path: '/', label: 'Home', component: <CalculPacePage></CalculPacePage> },
-  { path: '/percentage', label: 'Percentage', component: <PercentagePage></PercentagePage> },
-  { path: '/equivalent', label: 'Equivalent', component: <EquivalentPage></EquivalentPage> },
-];
+  {
+    path: '/',
+    label: 'Temps → Allure',
+    component: <TimeToPacePage></TimeToPacePage>,
+  },
+  {
+    path: '/PaceToTime',
+    label: 'Allure → Temps',
+    component: <PaceToTimePage></PaceToTimePage>,
+  },
+  {
+    path: '/equivalent',
+    label: 'Equivalent',
+    component: <EquivalentPage></EquivalentPage>,
+  },
+]
 export function NavBar() {
   return (
-      <nav className="navbar-container">
-            <ul className={"navbar-menu"}>
-              {routesConfig.map(({ path, label }) => (
-                  <li key={path} className={"navbar-item"}>
-                    <Link className={"navbar-link"} to={path}>{label}</Link>
-                  </li>
-              ))}
-            </ul>
-      </nav>
-  );
+    <nav className="navbar-container">
+      <ul className={'navbar-menu'}>
+        {routesConfig.map(({ path, label }) => (
+          <li key={path} className={'navbar-item'}>
+            <Link className={'navbar-link'} to={path}>
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
 }

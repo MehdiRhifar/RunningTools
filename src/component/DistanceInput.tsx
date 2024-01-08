@@ -1,66 +1,48 @@
-import React, {useState} from 'react';
-import {getKeys, parseIntSafe, thousandsSeparatorSymbol} from "../Utils/Utils.tsx";
-import MaskedInput, {Mask} from "react-text-mask";
-import {createNumberMask} from "text-mask-addons";
-import {distancesInfo} from "../Utils/Constants.tsx";
+import React, { useState } from 'react'
+import { getKeys, parseIntSafe } from '../Utils/Utils.tsx'
+import { distancesInfo } from '../Utils/Constants.tsx'
+import { NumberInput } from './NumberInput.tsx'
 
-interface OnIntegerChange {
-    onIntegerChange: (number: number) => void;
-    value? : number
+interface OnDistanceChange {
+  onDistanceChange: (number: number) => void
+  value?: number
 }
-export function DistanceInput({ onIntegerChange, value }: OnIntegerChange) {
-    const [numberStr, setNumberStr] = useState<string>(
-        value !== undefined ? value.toString() : ''
-    );
 
-    const [number, setNumber] = useState<number>(
-        value !== undefined ? value : 0
-    )
+export function DistanceInput({ onDistanceChange, value }: OnDistanceChange) {
+  const [distance, setDistance] = useState<number>(
+    value !== undefined ? value : 0
+  )
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const numberMask: Mask = createNumberMask({
-        prefix: '',
-        thousandsSeparatorSymbol: thousandsSeparatorSymbol, //Symbole de séparation des milier en fonction de la langue du PC
-        allowLeadingZeroes: false
-    });
+  const handleDistanceChange = (distance: number) => {
+    setDistance(distance)
+    onDistanceChange(distance)
+  }
 
-    const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newNumberStr = event.target.value.replace(thousandsSeparatorSymbol, "")
-        const newNumber = parseIntSafe(newNumberStr);
-        setNumberStr(event.target.value);
-        setNumber(newNumber)
-        onIntegerChange(newNumber);
-    };
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    handleDistanceChange(parseIntSafe(event.target.value))
+  }
 
-    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const distance = parseIntSafe(event.target.value)
-        const selectedValue = distance.toLocaleString();
-        setNumberStr(selectedValue); // Mettez à jour la valeur de l'input avec la sélection
-        setNumber(distance)
-        onIntegerChange(distance);
-    };
+  return (
+    <div className="flex">
+      <NumberInput
+        className="flex-1"
+        value={distance}
+        onNumberInput={handleDistanceChange}
+        postfix=" m"
+      />
 
-    return (
-        <div>
-            <MaskedInput
-                className="custom-input w-20 m-1"
-                mask={numberMask}
-                value={numberStr}
-                onChange={handleNumberChange}
-            />mètres |
-            <select
-                value={number}
-                onChange={handleSelectChange}
-                className="custom-input w-56 m-1">
-                <option value="">Sélectionnez une valeur</option>
-                {
-                    getKeys(distancesInfo).map((key) =>
-                            <option key={key} value={distancesInfo[key].distance}>
-                                {distancesInfo[key].name}
-                            </option>
-                    )
-                }
-            </select>
-        </div>
-    )
+      <select
+        value={distance}
+        onChange={handleSelectChange}
+        className="flex-1 ml-1 custom-input"
+      >
+        <option value="">Select Distance</option>
+        {getKeys(distancesInfo).map((key) => (
+          <option key={key} value={distancesInfo[key].distance}>
+            {distancesInfo[key].name}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
 }

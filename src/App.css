@@ -3,6 +3,20 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+:root {
+  --animation-error-duration: 300ms;
 }
 
 body {
@@ -11,19 +25,9 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
 
-  
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
 }
 
 .logo {
@@ -39,7 +43,6 @@ body {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-
 .card {
   padding: 2em;
 }
@@ -49,6 +52,7 @@ body {
 }
 
 .custom-input {
+  width: fit-content;
   border: 1px solid #5a5a5a;
   border-radius: 4px;
   padding: 0.5rem;
@@ -61,5 +65,45 @@ body {
   box-shadow: 0 0 3px rgba(49, 130, 206, 0.5);
 }
 
-/**/
+@media (max-width: 600px) {
+  .custom-input {
+    width: 100%;
+    font-size: 14px;
+    padding: 5px;
+  }
+}
 
+
+.custom-table {
+  /*width:%;*/
+  table-layout: fixed;
+  overflow-wrap: break-word;
+  border-collapse: separate;
+  border-spacing: 0.5em;
+}
+
+.custom-table th {
+  font-size: 20px; /* Ajustez la taille selon vos besoins */
+  font-weight: bold; /* Pour un texte plus épais */
+}
+
+.input-error:focus {
+  animation: shake var(--animation-error-duration);
+  border-color: red;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25%,
+  75% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+/**/
