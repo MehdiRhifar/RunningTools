@@ -42,7 +42,9 @@ export function EquivalentPage() {
   }
 
   const handleTimeChange = (distance: number, newTime: Time) => {
+    console.log(distance, newTime)
     const newPurdyPoint = purdyPoints(distance, newTime)
+    setPurdyPoint(newPurdyPoint)
     setTimes(updateTimes(newPurdyPoint))
 
     setCustom({
@@ -60,7 +62,7 @@ export function EquivalentPage() {
           <tr className={'font-extrabold'}>
             <th>Distance</th>
             <th>Temps</th>
-            <th>Pace</th>
+            <th>Pace (min/km)</th>
           </tr>
         </thead>
         <tbody>
@@ -92,7 +94,10 @@ export function EquivalentPage() {
           })}
           <tr key={'custom'}>
             <td>
-              <NumberInput onNumberInput={handleCustomDistanceChange} />
+              <NumberInput
+                max={100_000}
+                onNumberInput={handleCustomDistanceChange}
+              />
             </td>
             <td>
               <TimeInput

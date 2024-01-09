@@ -46,6 +46,14 @@ export function totalSecondsToPace(totalSeconds: number): Pace {
 
 export function totalSecondsToTime(totalSeconds: number): Time {
   totalSeconds = Math.round(totalSeconds)
+  if (totalSeconds < 0 || totalSeconds > 35_9999) {
+    // inf ou sup au min/max
+    return {
+      hours: 99,
+      minutes: 59,
+      seconds: 59,
+    }
+  }
   const hours = Math.floor(totalSeconds / 3600)
   const totalSeconds2 = totalSeconds - 3600 * hours
   return {

@@ -29,6 +29,9 @@ export function timeToPace(time: Time, distanceMetre: number): Pace {
 }
 
 export function timeToString(time: Time) {
+  if (time.hours > 99) {
+    return '99:59:59'
+  }
   return (
     formatTime(time.hours) +
     ':' +
