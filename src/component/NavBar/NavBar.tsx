@@ -24,10 +24,10 @@ export const routesConfig = [
 export function NavBar() {
   return (
     <nav className="navbar-container">
-      <ul className={'navbar-menu'}>
+      <ul className="navbar-menu">
         {routesConfig.map(({ path, label }) => (
-          <li key={path} className={'navbar-item'}>
-            <Link className={'navbar-link'} to={path}>
+          <li key={path} className="navbar-item">
+            <Link className="navbar-link" to={path}>
               {label}
             </Link>
           </li>

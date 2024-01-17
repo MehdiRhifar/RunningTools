@@ -72,11 +72,15 @@ export function NumberInput(numberInputProps: NumberInputProps) {
     plugins: getPlugins(),
   } as MaskitoOptions
 
+  const getClassName = () => {
+    return numberInputProps.className ? numberInputProps.className : ''
+  }
+
   const maskedInputRef = useMaskito({ options: numberOptions })
   return (
     <>
       <input
-        className={'custom-input ' + numberInputProps.className}
+        className={'custom-input ' + getClassName()}
         ref={maskedInputRef}
         value={numberStr}
         onInput={handleNumberChange}
