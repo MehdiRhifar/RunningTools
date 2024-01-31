@@ -29,5 +29,5 @@ export function isZeroPace(pace: Pace): boolean {
 }
 
 export function paceToString(pace: Pace): string {
-  return formatTime(pace.minutes) + '"' + formatTime(pace.seconds) + '\''
+  return formatTime(pace.minutes) + '"' + formatTime(pace.seconds) + "'"
 }

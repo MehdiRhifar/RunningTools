@@ -146,7 +146,7 @@ function getConstPurdyPoints(distance: number) {
     // Si la distance donnée n'est pas dans le tableau, utilisez la distance et le temps suivants
     const nextIndex = Math.min(
       distancesFiltered.length,
-      distancesArray.length - 1,
+      distancesArray.length - 1
     )
     const d3 = distancesArray[nextIndex]
     const t3 = d3 / portugueseTable[d3]
@@ -169,7 +169,7 @@ function getConstPurdyPoints(distance: number) {
 
 export function purdyPoints(
   referenceDistance: number,
-  referenceTime: Time,
+  referenceTime: Time
 ): number {
   const [a, b, timeWR] = getConstPurdyPoints(referenceDistance)
   const totalSeconds = timeToTotalSeconds(referenceTime)
@@ -184,7 +184,7 @@ export function purdyPointV2(referenceDistance: number, referenceTime: Time) {
 
 export function equivalentPurdyPoint(
   point: number,
-  targetDistance: number,
+  targetDistance: number
 ): Time {
   if (targetDistance < 0 || targetDistance > 100_000) {
     return totalSecondsToTime(0)
@@ -198,7 +198,7 @@ export function equivalentPurdyPoint(
 
 export function equivalentPurdyPointV2(
   point: number,
-  targetDistance: number,
+  targetDistance: number
 ): Time {
   // Distance cible pour laquelle vous voulez estimer le temps
   const [a, b, timeWR] = constPurdyPointV2(targetDistance)

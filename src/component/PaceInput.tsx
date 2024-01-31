@@ -27,7 +27,7 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
   } = maskitoWithPlaceholder('00\u002200\u0027', false)
 
   const optionWithPlace = {
-    mask: [/[0-9]/, /[0-9]/, '"', /[0-5]/, /[0-9]/, '\''],
+    mask: [/[0-9]/, /[0-9]/, '"', /[0-5]/, /[0-9]/, "'"],
     overwriteMode: 'replace',
     preprocessors: [],
     postprocessors: [...placeholderOptions.postprocessors],
@@ -43,7 +43,7 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
       return
     }
 
-    const value = event.target.value.replace('\'', '')
+    const value = event.target.value.replace("'", '')
     const timeSplit = value.split('"')
     const [minutes, seconds] = timeSplit.map(parseIntSafe)
     const pace2: Pace = { minutes: minutes, seconds: seconds }

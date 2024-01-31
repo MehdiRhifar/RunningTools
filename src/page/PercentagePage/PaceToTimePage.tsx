@@ -3,7 +3,10 @@ import { PaceInput } from '../../component/PaceInput.tsx'
 import { defaultPace, Pace, paceToString } from '../../interface/Pace.tsx'
 import { defaultTime, timeToString } from '../../interface/Time.tsx'
 import { DistanceInput } from '../../component/DistanceInput.tsx'
-import { PercentageActionType, percentageReducer } from './Percentage.reducer.ts'
+import {
+  PercentageActionType,
+  percentageReducer,
+} from './Percentage.reducer.ts'
 import { TimeCalculator } from '../../component/TimeCalculator.tsx'
 import { NumberInput } from '../../component/NumberInput.tsx'
 

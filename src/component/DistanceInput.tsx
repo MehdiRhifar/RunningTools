@@ -10,7 +10,7 @@ interface OnDistanceChange {
 
 export function DistanceInput({ onDistanceChange, value }: OnDistanceChange) {
   const [distance, setDistance] = useState<number>(
-    value !== undefined ? value : 0,
+    value !== undefined ? value : 0
   )
 
   const handleDistanceChange = (distance: number) => {
