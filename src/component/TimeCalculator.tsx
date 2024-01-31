@@ -1,4 +1,8 @@
-import { Time, timeToStringMinimalist, timeToTotalSeconds } from '../interface/Time.tsx'
+import {
+  Time,
+  timeToStringMinimalist,
+  timeToTotalSeconds,
+} from '../interface/Time.tsx'
 import { useEffect, useState } from 'react'
 import { totalSecondsToTime } from '../Utils/Utils.tsx'
 import { NumberInput } from './NumberInput.tsx'
@@ -15,7 +19,7 @@ export function TimeCalculator({ speed, distance, time }: TimeCalculatorProps) {
 
   useEffect(() => {
     if (speed) {
-      setSecondsPassage(input * 3.6 / speed)
+      setSecondsPassage((input * 3.6) / speed)
     } else {
       setSecondsPassage((input * timeToTotalSeconds(time)) / distance)
     }
