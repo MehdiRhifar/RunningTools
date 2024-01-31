@@ -74,6 +74,7 @@ export function PaceToTimePage() {
       <TimeCalculator
         distance={state.distance}
         time={state.timeForDist}
+        speed={state.speed}
       ></TimeCalculator>
     </>
   )
