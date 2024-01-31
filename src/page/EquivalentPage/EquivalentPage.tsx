@@ -96,7 +96,7 @@ export function EquivalentPage() {
             <td>
               <NumberInput
                 max={100_000}
-                postfix={" m"}
+                postfix={' m'}
                 onNumberInput={handleCustomDistanceChange}
               />
             </td>

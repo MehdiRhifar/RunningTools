@@ -21,6 +21,7 @@ export const routesConfig = [
     component: <EquivalentPage></EquivalentPage>,
   },
 ]
+
 export function NavBar() {
   return (
     <nav className="navbar-container">

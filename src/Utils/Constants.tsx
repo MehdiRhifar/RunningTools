@@ -18,6 +18,7 @@ export interface Distance<T> {
 }
 
 export interface DistanceInfo extends Distance<DistanceDetail> {}
+
 export const distancesInfo: DistanceInfo = {
   Marathon: { distance: 42_195, name: 'Marathon' },
   SemiMarathon: { distance: 21_098, name: 'Semi Marathon' },

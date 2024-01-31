@@ -27,6 +27,7 @@ export const decimalSeparatorSymbol: string = Number(1000.1)
 export function toLocaleString(value: number) {
   return Number(value).toLocaleString()
 }
+
 export function secondsKmToKmHours(totalSeconds: number) {
   if (totalSeconds == 0) {
     return 0

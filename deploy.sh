@@ -22,5 +22,5 @@ echo "Build terminé."
 
 # Transfert via SSH avec suppression et remplacement
 echo "Début de la synchronisation avec le serveur distant..."
-rsync -avz --delete --exclude 'node_modules' $LOCAL_PROJECT_PATH/dist/ -e "ssh -p $REMOTE_PORT" $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH
+rsync -avz --exclude 'node_modules' "$LOCAL_PROJECT_PATH"/dist/ -e "ssh -p $REMOTE_PORT" $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH
 echo "Synchronisation terminée."

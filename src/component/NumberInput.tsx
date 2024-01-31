@@ -87,7 +87,7 @@ export function NumberInput({
   return (
     <>
       <input
-        placeholder={'0' + numberInputProps.postfix ?? ""}
+        placeholder={'0' + numberInputProps.postfix ?? ''}
         className={'custom-input ' + getClassName()}
         ref={maskedInputRef}
         value={numberStr}
