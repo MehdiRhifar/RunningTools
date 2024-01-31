@@ -44,7 +44,7 @@ export function PaceToTimePage() {
           <NumberInput
             className={'w-16'}
             onNumberInput={handlePercent}
-            value={state.percent}
+            propsValue={state.percent}
             postfix={' %'}
           />{' '}
         </div>
@@ -52,7 +52,7 @@ export function PaceToTimePage() {
           <NumberInput
             className={'flex-1'}
             onNumberInput={handleSpeed}
-            value={state.speed}
+            propsValue={state.speed}
             postfix={' km/h'}
           />{' '}
           <PaceInput

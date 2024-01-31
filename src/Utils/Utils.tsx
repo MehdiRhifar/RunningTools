@@ -6,12 +6,10 @@ export const parseIntSafe = (str: string): number => {
 }
 
 export const parseNumberSafe = (str: string): number => {
-  return (
-    parseFloat(
-      str
-        .replaceAll(thousandsSeparatorSymbol, '')
-        .replaceAll(decimalSeparatorSymbol, '.')
-    ) || 0
+  return parseFloat(
+    str
+      .replaceAll(thousandsSeparatorSymbol, '')
+      .replaceAll(decimalSeparatorSymbol, '.')
   )
 }
 

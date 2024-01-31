@@ -26,7 +26,7 @@ export function DistanceInput({ onDistanceChange, value }: OnDistanceChange) {
     <div className="flex">
       <NumberInput
         className="flex-1"
-        value={distance}
+        propsValue={distance}
         onNumberInput={handleDistanceChange}
         postfix=" m"
       />

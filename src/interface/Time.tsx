@@ -13,7 +13,7 @@ export const defaultTime: Time = {
   seconds: 0,
 }
 
-export function isZero(time: Time): boolean {
+export function isZeroTime(time: Time): boolean {
   return time.hours == 0 && time.minutes == 0 && time.seconds == 0
 }
 

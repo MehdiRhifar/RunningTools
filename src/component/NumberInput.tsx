@@ -10,7 +10,7 @@ import { MaskitoOptions } from '@maskito/core'
 
 interface NumberInputProps {
   onNumberInput: (number: number) => void
-  value?: number
+  propsValue?: number
   className?: string
   min?: number
   max?: number
@@ -21,28 +21,35 @@ interface NumberInputProps {
   postfix?: string
 }
 
-export function NumberInput(numberInputProps: NumberInputProps) {
-  const [numberStr, setNumberStr] = useState<string>(
-    numberInputProps.value != undefined
-      ? numberInputProps.value.toString()
-      : '0'
-  )
+export function NumberInput({
+  propsValue,
+  ...numberInputProps
+}: NumberInputProps) {
+  const [numberStr, setNumberStr] = useState<string>('')
 
   useEffect(() => {
-    if (
-      numberInputProps.value != undefined &&
-      numberInputProps.value != parseNumberSafe(numberStr) // Changement de l'exterieur
-    ) {
-      setNumberStr(numberInputProps.value.toLocaleString())
+    if (propsValue == undefined || (propsValue == 0 && numberStr == '')) {
+      // Meaning input is empty
+      setNumberStr('')
+      return
     }
-  }, [numberInputProps.value])
+    if (propsValue != parseNumberSafe(numberStr)) {
+      // Changement de l'exterieur
+      setNumberStr(propsValue.toLocaleString() + numberInputProps.postfix)
+    }
+  }, [propsValue])
 
   const handleNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newNumberStr = event.target.value
     const newNumber = parseNumberSafe(newNumberStr) // Parse la chaîne en un nombre entier
-    setNumberStr(newNumberStr)
 
-    if (newNumber != numberInputProps.value) {
+    if (isNaN(newNumber)) {
+      setNumberStr('')
+      numberInputProps.onNumberInput(0)
+      return
+    }
+    if (newNumber != propsValue) {
+      setNumberStr(newNumberStr)
       numberInputProps.onNumberInput(newNumber)
     }
   }
@@ -80,6 +87,7 @@ export function NumberInput(numberInputProps: NumberInputProps) {
   return (
     <>
       <input
+        placeholder={'0' + numberInputProps.postfix}
         className={'custom-input ' + getClassName()}
         ref={maskedInputRef}
         value={numberStr}

@@ -24,7 +24,7 @@ export function toTime(distance: number, pace: Pace): Time {
   return totalSecondsToTime((totalSeconds(pace) * distance) / 1000)
 }
 
-export function isZero(pace: Pace): boolean {
+export function isZeroPace(pace: Pace): boolean {
   return pace.minutes == 0 && pace.seconds == 0
 }
 

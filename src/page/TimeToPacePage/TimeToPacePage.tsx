@@ -2,12 +2,16 @@ import { useCallback, useState } from 'react'
 import FormCalculPace from '../../component/FormCalculPace.tsx'
 import {
   defaultPace,
-  isZero,
   Pace,
   paceToString,
   toSpeed,
 } from '../../interface/Pace.tsx'
-import { defaultTime, Time, timeToPace } from '../../interface/Time.tsx'
+import {
+  defaultTime,
+  isZeroTime,
+  Time,
+  timeToPace,
+} from '../../interface/Time.tsx'
 import { TimeCalculator } from '../../component/TimeCalculator.tsx'
 
 export function TimeToPacePage() {
@@ -21,13 +25,14 @@ export function TimeToPacePage() {
   const handleFormChange = useCallback((distanceMeter: number, time: Time) => {
     setDistance(distanceMeter)
     setTime(time)
-    if (distanceMeter == 0 || isZero(time)) {
+    if (distanceMeter == 0 || isZeroTime(time)) {
       setSpeed(0)
       setPace(defaultPace)
       return
     }
 
     const newPace = timeToPace(time, distanceMeter)
+
     setPace(newPace)
     setSpeed(toSpeed(newPace))
   }, [])
