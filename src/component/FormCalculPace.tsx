@@ -6,6 +6,7 @@ import { DistanceInput } from './DistanceInput.tsx'
 interface FormCalculPaceProps {
   onFormChange: (distance: number, time: Time) => void
 }
+
 function FormCalculPace({ onFormChange }: FormCalculPaceProps) {
   const [distance, setDistance] = useState(0)
   const [time, setTime] = useState(defaultTime)

@@ -1,9 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react'
-import {
-  decimalSeparatorSymbol,
-  parseNumberSafe,
-  thousandsSeparatorSymbol,
-} from '../Utils/Utils.tsx'
+import { decimalSeparatorSymbol, parseNumberSafe, thousandsSeparatorSymbol } from '../Utils/Utils.tsx'
 import { maskitoCaretGuard, maskitoNumberOptionsGenerator } from '@maskito/kit'
 import { useMaskito } from '@maskito/react'
 import { MaskitoOptions } from '@maskito/core'
@@ -22,9 +18,9 @@ interface NumberInputProps {
 }
 
 export function NumberInput({
-  propsValue,
-  ...numberInputProps
-}: NumberInputProps) {
+                              propsValue,
+                              ...numberInputProps
+                            }: NumberInputProps) {
   const [numberStr, setNumberStr] = useState<string>('')
 
   useEffect(() => {
@@ -87,7 +83,7 @@ export function NumberInput({
   return (
     <>
       <input
-        placeholder={'0' + numberInputProps.postfix ?? ""}
+        placeholder={'0' + numberInputProps.postfix ?? ''}
         className={'custom-input ' + getClassName()}
         ref={maskedInputRef}
         value={numberStr}

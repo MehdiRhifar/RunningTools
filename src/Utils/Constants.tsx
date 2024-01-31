@@ -17,7 +17,9 @@ export interface Distance<T> {
   m800: T
 }
 
-export interface DistanceInfo extends Distance<DistanceDetail> {}
+export interface DistanceInfo extends Distance<DistanceDetail> {
+}
+
 export const distancesInfo: DistanceInfo = {
   Marathon: { distance: 42_195, name: 'Marathon' },
   SemiMarathon: { distance: 21_098, name: 'Semi Marathon' },
@@ -40,6 +42,6 @@ export const defaultDistanceTime: Distance<Time> = {
 
 export const animErrorDuration = parseIntSafe(
   getComputedStyle(document.documentElement).getPropertyValue(
-    '--animation-error-duration'
-  )
+    '--animation-error-duration',
+  ),
 )

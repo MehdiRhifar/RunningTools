@@ -9,7 +9,7 @@ export const parseNumberSafe = (str: string): number => {
   return parseFloat(
     str
       .replaceAll(thousandsSeparatorSymbol, '')
-      .replaceAll(decimalSeparatorSymbol, '.')
+      .replaceAll(decimalSeparatorSymbol, '.'),
   )
 }
 
@@ -27,6 +27,7 @@ export const decimalSeparatorSymbol: string = Number(1000.1)
 export function toLocaleString(value: number) {
   return Number(value).toLocaleString()
 }
+
 export function secondsKmToKmHours(totalSeconds: number) {
   if (totalSeconds == 0) {
     return 0
@@ -76,14 +77,14 @@ export function speedToSecondsKm(speed: number) {
 export function equivalent(
   referenceTime: Time,
   referenceDistance: number,
-  goalDistance: number
+  goalDistance: number,
 ): Time {
   const factor = Math.pow(goalDistance / referenceDistance, 1.06)
   return totalSecondsToTime(timeToTotalSeconds(referenceTime) * factor)
 }
 
 export const getKeys = Object.keys as <T extends object>(
-  obj: T
+  obj: T,
 ) => Array<keyof T>
 
 // Fonction pour obtenir la valeur numérique d'une variable CSS

@@ -2,12 +2,7 @@ import { useState } from 'react'
 import { defaultTime, Time, timeToPace } from '../../interface/Time.tsx'
 import { TimeInput } from '../../component/TimeInput.tsx'
 import { getKeys } from '../../Utils/Utils.tsx'
-import {
-  defaultDistanceTime,
-  Distance,
-  DistanceInfo,
-  distancesInfo,
-} from '../../Utils/Constants.tsx'
+import { defaultDistanceTime, Distance, DistanceInfo, distancesInfo } from '../../Utils/Constants.tsx'
 import { paceToString } from '../../interface/Pace.tsx'
 import { equivalentPurdyPoint, purdyPoints } from '../../Utils/PurdyPoints.tsx'
 import { NumberInput } from '../../component/NumberInput.tsx'
@@ -27,7 +22,7 @@ export function EquivalentPage() {
     getKeys(distancesInfo).map((key) => {
       updatedTimes[key] = equivalentPurdyPoint(
         newPurdyPoint,
-        distancesInfo[key].distance
+        distancesInfo[key].distance,
       )
     })
 
@@ -59,57 +54,57 @@ export function EquivalentPage() {
 
       <table className={'custom-table'}>
         <thead>
-          <tr className={'font-extrabold'}>
-            <th>Distance</th>
-            <th>Temps</th>
-            <th>Pace (min/km)</th>
-          </tr>
+        <tr className={'font-extrabold'}>
+          <th>Distance</th>
+          <th>Temps</th>
+          <th>Pace (min/km)</th>
+        </tr>
         </thead>
         <tbody>
-          {(Object.keys(times) as Array<keyof typeof times>).map((distance) => {
-            return (
-              <tr key={distance}>
-                <td>{distancesInfo[distance].name}</td>
-                <td>
-                  <TimeInput
-                    value={times[distance]}
-                    onTimeChange={(newValue) => {
-                      handleTimeChange(
-                        distancesInfo[distance].distance,
-                        newValue
-                      )
-                    }}
-                  />
-                </td>
-                <td>
-                  {paceToString(
-                    timeToPace(
-                      times[distance],
-                      distancesInfo[distance].distance
+        {(Object.keys(times) as Array<keyof typeof times>).map((distance) => {
+          return (
+            <tr key={distance}>
+              <td>{distancesInfo[distance].name}</td>
+              <td>
+                <TimeInput
+                  value={times[distance]}
+                  onTimeChange={(newValue) => {
+                    handleTimeChange(
+                      distancesInfo[distance].distance,
+                      newValue,
                     )
-                  )}
-                </td>
-              </tr>
-            )
-          })}
-          <tr key={'custom'}>
-            <td>
-              <NumberInput
-                max={100_000}
-                postfix={" m"}
-                onNumberInput={handleCustomDistanceChange}
-              />
-            </td>
-            <td>
-              <TimeInput
-                value={custom.time}
-                onTimeChange={(newValue) => {
-                  handleTimeChange(custom.distance, newValue)
-                }}
-              />
-            </td>
-            <td>{paceToString(timeToPace(custom.time, custom.distance))}</td>
-          </tr>
+                  }}
+                />
+              </td>
+              <td>
+                {paceToString(
+                  timeToPace(
+                    times[distance],
+                    distancesInfo[distance].distance,
+                  ),
+                )}
+              </td>
+            </tr>
+          )
+        })}
+        <tr key={'custom'}>
+          <td>
+            <NumberInput
+              max={100_000}
+              postfix={' m'}
+              onNumberInput={handleCustomDistanceChange}
+            />
+          </td>
+          <td>
+            <TimeInput
+              value={custom.time}
+              onTimeChange={(newValue) => {
+                handleTimeChange(custom.distance, newValue)
+              }}
+            />
+          </td>
+          <td>{paceToString(timeToPace(custom.time, custom.distance))}</td>
+        </tr>
         </tbody>
       </table>
     </>

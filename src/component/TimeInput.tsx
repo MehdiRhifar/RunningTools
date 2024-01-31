@@ -3,10 +3,7 @@ import { parseIntSafe } from '../Utils/Utils.tsx'
 import { defaultTime, Time, timeToString } from '../interface/Time.tsx'
 
 import { useMaskito } from '@maskito/react'
-import {
-  maskitoTimeOptionsGenerator,
-  maskitoWithPlaceholder,
-} from '@maskito/kit'
+import { maskitoTimeOptionsGenerator, maskitoWithPlaceholder } from '@maskito/kit'
 import { MaskitoOptions } from '@maskito/core'
 
 interface OnTimeChange {
