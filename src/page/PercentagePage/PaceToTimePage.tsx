@@ -37,7 +37,7 @@ export function PaceToTimePage() {
   }
 
   return (
-    <>
+    <div className={"main-container"}>
       <title>percentage</title>
       <div className={'my-10'}>
         <div>
@@ -74,8 +74,9 @@ export function PaceToTimePage() {
       <TimeCalculator
         distance={state.distance}
         time={state.timeForDist}
-        speed={state.speed}
+        speed={state.speedPercent}
       ></TimeCalculator>
-    </>
+    </div>
+
   )
 }

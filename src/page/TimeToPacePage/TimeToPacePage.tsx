@@ -39,13 +39,15 @@ export function TimeToPacePage() {
 
   return (
     <>
-      <h2>{"Calcul de l'allure de course"}</h2>
-      <FormCalculPace onFormChange={handleFormChange}></FormCalculPace>
-      <p>
-        {speed.toFixed(2)} km/h - {paceToString(pace)}
-      </p>
+      <div className={"main-container"}>
+        <h2>{"Calcul de l'allure de course"}</h2>
+        <FormCalculPace onFormChange={handleFormChange}></FormCalculPace>
+        <p>
+          {speed.toFixed(2)} km/h - {paceToString(pace)}
+        </p>
 
-      <TimeCalculator distance={distance} time={time}></TimeCalculator>
+        <TimeCalculator distance={distance} time={time}></TimeCalculator>
+      </div>
     </>
   )
 }

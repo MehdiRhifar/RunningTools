@@ -1,0 +1,80 @@
+/* Pour améliorer la barre de défilement */
+::-webkit-scrollbar {
+    height: 10px; /* Épaisseur de la barre horizontale */
+    background-color: #1a1a1a; /* Couleur de fond */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #444; /* Couleur de la barre */
+    border-radius: 5px; /* Arrondi */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #666; /* Couleur en survol */
+}
+
+.search_div {
+    display: inline-block;
+    text-align: center;
+}
+
+.table_container {
+    overflow: auto;
+    border: 5px solid #ccc;
+    margin: 0 2rem 2rem 2rem;
+}
+
+.table_bareme {
+    margin: 0;
+    padding: 0;
+    width: 100%; /* Étend le tableau à la largeur du conteneur */
+    table-layout: auto; /* Permet un ajustement automatique des colonnes */
+    overflow-x: auto; /* Défilement horizontal au niveau du tableau */
+}
+
+.table_bareme th,
+.table_bareme td {
+    padding: 10px; /* Ajoute un espacement pour une meilleure lisibilité */
+    text-align: center; /* Centre le texte */
+    white-space: nowrap; /* Empêche les contenus longs de passer à la ligne */
+}
+
+.column_left {
+    position: sticky;
+    left: 0;
+}
+
+.outer {
+    position: relative;
+}
+.inner {
+    overflow-x: scroll;
+    overflow-y: visible;
+    width: 400px;
+    margin-left: 100px;
+}
+
+@media (max-width: 600px) or (max-height: 600px) {
+    .column_left {
+        /*position: relative;*/
+        max-width: 5%;
+        padding: 0;
+        margin: 0;
+    }
+
+
+    .table_bareme th,
+    .table_bareme td {
+        padding: 2px; /* Ajoute un espacement pour une meilleure lisibilité */
+        text-align: center; /* Centre le texte */
+        white-space: nowrap; /* Empêche les contenus longs de passer à la ligne */
+        font-size: 75%;
+    }
+
+
+    .table_container {
+        overflow: auto;
+        border: 5px solid #ccc;
+        margin: 0;
+    }
+}

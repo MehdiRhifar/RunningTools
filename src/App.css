@@ -1,14 +1,14 @@
 #root {
-    max-width: 1280px;
     margin: auto auto;
-    padding: 2rem;
-    text-align: center;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+
+    --body-bg-color: #242424;
+    --body-bg-color-variant: #141414;
 
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -19,15 +19,40 @@
     --animation-error-duration: 300ms;
 }
 
-body {
+html, body {
     margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
+    padding: 0;
+    height: 100%; /* Nécessaire pour que les enfants puissent occuper 100% de la hauteur */
+}
 
+.app-container {
+    display: flex;
+    flex-direction: column; /* Permet de placer le nav en haut et le contenu en bas */
+    height: 100vh; /* 100% de la hauteur de la fenêtre */
+}
+
+.dark-bg {
+    background-color: var(--body-bg-color);
+    color: #fff;
+}
+.dark-bg-variant {
+    background-color: var(--body-bg-color-variant);
+    color: #fff;
+}
+
+
+.dark-bg {
+    background-color: var(--body-bg-color);
+    color: #fff;
+}
+
+body {
     color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
+}
+
+table {
+    background-color: var(--body-bg-color);
 }
 
 .logo {
@@ -54,7 +79,19 @@ body {
 }
 
 .main-container {
-    margin-top: 6em;
+    padding: 0;
+    margin: 0;
+    place-items: center;
+    min-width: 320px;
+
+    flex-grow: 1; /* Remplit tout l'espace disponible */
+    overflow: auto; /* Gère le débordement si le contenu est trop grand */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .custom-input {

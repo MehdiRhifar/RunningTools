@@ -7,10 +7,10 @@ SCRIPT_PATH="$( cd "$(dirname "$0")" || exit ; pwd -P )"
 
 # Variables
 LOCAL_PROJECT_PATH="$SCRIPT_PATH"  # Utilisez le chemin du script comme chemin du projet local
-REMOTE_USER="u245063369"
-REMOTE_HOST="62.72.37.253"
-REMOTE_PORT="65002"
-REMOTE_PATH="/home/u245063369/domains/runningtools.fr/public_html"  # Remplacez par le chemin sur votre hébergeur
+REMOTE_USER="coyi9848"
+REMOTE_HOST="runningtools.fr"
+REMOTE_PORT="22"
+REMOTE_PATH="/home/coyi9848/runningTools.fr"  # Remplacez par le chemin sur votre hébergeur
 
 # Build du projet
 echo "Build du projet..."

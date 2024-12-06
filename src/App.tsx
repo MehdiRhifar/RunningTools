@@ -6,14 +6,12 @@ function App() {
   return (
     <>
       <NavBar />
-      <div className={'main-container'}>
         <Routes>
           {routesConfig.map(({ path, component }) => (
             <Route key={path} path={path} element={component} />
           ))}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </div>
     </>
   )
 }

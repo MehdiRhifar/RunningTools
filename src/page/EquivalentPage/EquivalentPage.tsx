@@ -54,7 +54,7 @@ export function EquivalentPage() {
   }
 
   return (
-    <>
+    <div className={"main-container"}>
       <h2>Page equivalence de performance</h2>
 
       <table className={'custom-table'}>
@@ -112,6 +112,6 @@ export function EquivalentPage() {
           </tr>
         </tbody>
       </table>
-    </>
+    </div>
   )
 }
