@@ -1,6 +1,7 @@
-import { Time, timeToTotalSeconds } from '../interface/Time.tsx'
-import { totalSecondsToTime } from './Utils.tsx'
+import { Time, timeToTotalMilliseconds } from '../interface/Time.tsx'
+import { totalMillisecondsToTime } from './Utils.tsx'
 
+// Table de distance (m) : m/s
 const portugueseTable: Record<number, number> = {
   40.0: 11.0,
   50.0: 10.996,
@@ -93,36 +94,6 @@ function calculateFractionOnTurns(distance: number): number {
   }
 }
 
-function constPurdyPointV2(referenceDistance: number) {
-  const b1 = 11.15895
-  const b2 = 4.304605
-  const b3 = 0.5234627
-  const b4 = 4.03156
-  const b5 = 2.316157
-  const r1 = 3.796158e-2
-  const r2 = 1.646772e-3
-  const r3 = 4.10767e-4
-  const r4 = 7.068099e-6
-  const r5 = 5.22099e-9
-
-  // Calculate world record velocity from running curve for the reference distance
-  const speedWR =
-    -b1 * Math.exp(-r1 * referenceDistance) +
-    b2 * Math.exp(-r2 * referenceDistance) +
-    b3 * Math.exp(-r3 * referenceDistance) +
-    b4 * Math.exp(-r4 * referenceDistance) +
-    b5 * Math.exp(-r5 * referenceDistance)
-
-  // Calculate world record time for the reference distance
-  const timeWR = referenceDistance / speedWR
-
-  // Calculate least squares Purdy Points for the reference distance
-  const k = 0.0654 - 0.00258 * speedWR
-  const a = 85 / k
-  const b = 1 - 1035 / a
-  return [a, b, timeWR]
-}
-
 function getConstPurdyPoints(distance: number) {
   const c1 = 0.2
   const c2 = 0.08
@@ -172,14 +143,8 @@ export function purdyPoints(
   referenceTime: Time
 ): number {
   const [a, b, timeWR] = getConstPurdyPoints(referenceDistance)
-  const totalSeconds = timeToTotalSeconds(referenceTime)
+  const totalSeconds = timeToTotalMilliseconds(referenceTime)/1000
   return a * (timeWR / totalSeconds - b)
-}
-
-export function purdyPointV2(referenceDistance: number, referenceTime: Time) {
-  const [a, b, timeWR] = constPurdyPointV2(referenceDistance)
-  const refTime = timeToTotalSeconds(referenceTime)
-  return a * (timeWR / refTime - b)
 }
 
 export function equivalentPurdyPoint(
@@ -187,21 +152,11 @@ export function equivalentPurdyPoint(
   targetDistance: number
 ): Time {
   if (targetDistance < 0 || targetDistance > 100_000) {
-    return totalSecondsToTime(0)
+    return totalMillisecondsToTime(0)
   }
 
   const [a, b, t950] = getConstPurdyPoints(targetDistance)
   const seconds = t950 / (point / a + b)
 
-  return totalSecondsToTime(seconds)
-}
-
-export function equivalentPurdyPointV2(
-  point: number,
-  targetDistance: number
-): Time {
-  // Distance cible pour laquelle vous voulez estimer le temps
-  const [a, b, timeWR] = constPurdyPointV2(targetDistance)
-  const totalSecRes = timeWR / (point / a + b)
-  return totalSecondsToTime(totalSecRes)
+  return totalMillisecondsToTime(seconds*1000)
 }

@@ -1,27 +1,31 @@
 import { Time } from './Time.tsx'
-import { formatTime, totalSecondsToTime } from '../Utils/Utils.tsx'
+import { formatTime, totalMillisecondsToTime } from '../Utils/Utils.tsx'
 
 export interface Pace {
   minutes: number
   seconds: number
+  milliseconds: number
 }
 
 export const defaultPace: Pace = {
   minutes: 0,
   seconds: 0,
+  milliseconds: 0,
 }
 
-export function totalSeconds(pace: Pace) {
-  return pace.minutes * 60 + pace.seconds
+export function totalMillisecondsPerKm(pace: Pace) {
+  return (pace.minutes * 60 + pace.seconds) * 1000 + pace.milliseconds
 }
 
 export function toSpeed(pace: Pace): number {
-  const speed = totalSeconds(pace)
-  return speed == 0 ? 0 : 3600 / speed
+  const paceMs = totalMillisecondsPerKm(pace)
+  return paceMs == 0 ? 0 : 3_600_000 / paceMs
 }
 
-export function toTime(distance: number, pace: Pace): Time {
-  return totalSecondsToTime((totalSeconds(pace) * distance) / 1000)
+export function toTime(distanceMeter: number, pace: Pace): Time {
+  const msPerKm = totalMillisecondsPerKm(pace)
+  const totalMilliseconds = msPerKm * (distanceMeter / 1000)
+  return totalMillisecondsToTime(totalMilliseconds)
 }
 
 export function isZeroPace(pace: Pace): boolean {

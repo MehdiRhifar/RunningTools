@@ -3,10 +3,10 @@ import {
   defaultPace,
   Pace,
   toSpeed,
-  totalSeconds,
+  totalMillisecondsPerKm,
   toTime,
 } from '../../interface/Pace.js'
-import { toPace, totalSecondsToPace } from '../../Utils/Utils.tsx'
+import { toPace, totalMillisecondsToPace } from '../../Utils/Utils.tsx'
 import { Time } from '../../interface/Time.tsx'
 
 export interface PercentagePageState {
@@ -52,9 +52,9 @@ function calculatePacePercent(percent: number, pace: Pace): Pace {
   if (percent == 0) {
     return defaultPace
   }
-  const totalSec = totalSeconds(pace)
-  const secondsPercent = (totalSec * 100) / percent
-  return totalSecondsToPace(secondsPercent)
+  const totalMs = totalMillisecondsPerKm(pace)
+  const msPercent = (totalMs * 100) / percent
+  return totalMillisecondsToPace(msPercent)
 }
 
 // Fonction de réduction

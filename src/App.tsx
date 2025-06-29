@@ -1,10 +1,12 @@
 import './App.css'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { NavBar, routesConfig } from './component/NavBar/NavBar.tsx'
+import { MillisecondsProvider } from './contexts/MillisecondsContext.tsx'
 
 function App() {
   return (
     <>
+      <MillisecondsProvider>
       <NavBar />
         <Routes>
           {routesConfig.map(({ path, component }) => (
@@ -12,6 +14,7 @@ function App() {
           ))}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
+      </MillisecondsProvider>
     </>
   )
 }

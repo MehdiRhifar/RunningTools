@@ -1,10 +1,10 @@
 import {
   Time,
   timeToStringMinimalist,
-  timeToTotalSeconds,
+  timeToTotalMilliseconds,
 } from '../interface/Time.tsx'
 import { useEffect, useState } from 'react'
-import { totalSecondsToTime } from '../Utils/Utils.tsx'
+import { totalMillisecondsToTime } from '../Utils/Utils.tsx'
 import { NumberInput } from './NumberInput.tsx'
 
 type TimeCalculatorProps = {
@@ -14,24 +14,24 @@ type TimeCalculatorProps = {
 }
 
 export function TimeCalculator({ speed, distance, time }: TimeCalculatorProps) {
-  const [input, setInput] = useState(0)
-  const [secondsPassage, setSecondsPassage] = useState(0)
+  const [inputDistance, setInputDistance] = useState(0)
+  const [millisecondsPassage, setMillisecondsPassage] = useState(0)
 
   useEffect(() => {
     if (speed) {
-      setSecondsPassage((input * 3.6) / speed)
+      setMillisecondsPassage((inputDistance * 36_00) / speed)
     } else {
-      setSecondsPassage((input * timeToTotalSeconds(time)) / distance)
+      setMillisecondsPassage((inputDistance * timeToTotalMilliseconds(time)) / distance)
     }
-  }, [input, distance, time, speed])
+  }, [inputDistance, distance, time, speed])
 
   return (
     <div className="p-2">
       <h2>Temps de passage</h2>
-      <NumberInput postfix={' m'} onNumberInput={setInput}></NumberInput>
+      <NumberInput postfix={' m'} onNumberInput={setInputDistance}></NumberInput>
       <p>
-        Temps de passage au {input.toLocaleString()}m :{' '}
-        {timeToStringMinimalist(totalSecondsToTime(secondsPassage))}
+        Temps de passage au {inputDistance.toLocaleString()}m :{' '}
+        {timeToStringMinimalist(totalMillisecondsToTime(millisecondsPassage))}
       </p>
     </div>
   )

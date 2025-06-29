@@ -1,58 +1,90 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { parseIntSafe } from '../Utils/Utils.tsx'
 import { defaultTime, Time, timeToString } from '../interface/Time.tsx'
 
 import { useMaskito } from '@maskito/react'
-import {
-  maskitoTimeOptionsGenerator,
-  maskitoWithPlaceholder,
-} from '@maskito/kit'
+import { maskitoWithPlaceholder } from '@maskito/kit'
 import { MaskitoOptions } from '@maskito/core'
+import { useMilliseconds } from '../contexts/MillisecondsContext.tsx'
 
 interface OnTimeChange {
-  value?: Time
+  timeChanged?: Time
   onTimeChange: (time: Time) => void
 }
 
-export function TimeInput({ onTimeChange, value }: OnTimeChange) {
-  const [timeStr, setTimeStr] = useState(timeToString(defaultTime))
+export function TimeInput({ onTimeChange, timeChanged }: OnTimeChange) {
+  const [time, setTime] = useState(defaultTime)
+  const { isMillisecondsMode } = useMilliseconds()
+  const [timeStr, setTimeStr] = useState(timeToString(time, isMillisecondsMode))
+
 
   useEffect(() => {
-    if (value) {
-      setTimeStr(timeToString(value))
+    if (timeChanged) {
+      setTime(timeChanged)
+      setTimeStr(timeToString(timeChanged, isMillisecondsMode))
     }
-  }, [value])
+  }, [timeChanged])
+
+  useEffect(() => {
+    setTime({...time, milliseconds: 0})
+    setTimeStr(timeToString(time, isMillisecondsMode))
+  }, [isMillisecondsMode])
+
+
+  const parseTimeFromInput = (value: string, isMillisecondsMode: boolean): Time => {
+    const [hours_str, minutes_str, seconds_milliseconds] = value.split(':')
+    const hours = parseIntSafe(hours_str)
+    const minutes = parseIntSafe(minutes_str)
+
+    if (isMillisecondsMode) {
+      const [seconds, milliseconds] = seconds_milliseconds
+        .split('.')
+        .map(parseIntSafe)
+      return { hours, minutes, seconds, milliseconds: milliseconds * 10 }
+    } else {
+      const seconds = parseIntSafe(seconds_milliseconds)
+      return { hours, minutes, seconds, milliseconds: 0 }
+    }
+  }
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setTimeStr(value)
-    const [hours, minutes, seconds] = value.split(':').map(parseIntSafe)
-    onTimeChange({ hours, minutes, seconds })
+    const time = parseTimeFromInput(value, isMillisecondsMode) // ✅ Simple et propre
+    setTime(time)
+    onTimeChange(time)
   }
 
-  const timeOption = maskitoTimeOptionsGenerator({
-    mode: 'HH:MM:SS',
-    timeSegmentMaxValues: { hours: 99 },
-  })
+  const { placeholder, mask } = useMemo(() => {
+    if (isMillisecondsMode) {
+      return {
+        placeholder: '00:00:00.00',
+        mask: [/[0-9]/,/[0-9]/,':',/[0-5]/,/[0-9]/,':',/[0-5]/,/[0-9]/,'.',/[0-9]/,/[0-9]/]
+      }
+    } else {
+      return {
+        placeholder: '00:00:00',
+        mask: [/[0-9]/,/[0-9]/,':',/[0-5]/,/[0-9]/,':',/[0-5]/,/[0-9]/]
+      }
+    }
+  }, [isMillisecondsMode])
 
-  const {
-    plugins, // plugins keeps caret inside actual value and remove placeholder on blur
-    ...placeholderOptions
-    // pass 'true' as second argument to add plugin to hide placeholder when input is not focused
-  } = maskitoWithPlaceholder('00:00:00', false)
+  const maskitoOptions = useMemo(() => {
+    const {
+      plugins,
+      ...placeholderOptions
+    } = maskitoWithPlaceholder(placeholder, false)
 
-  const optionWithPlace = {
-    ...timeOption,
-    plugins: timeOption.plugins.concat(),
-    preprocessors: [...timeOption.preprocessors],
-    postprocessors: [
-      ...timeOption.postprocessors,
-      // Always put it AFTER all other postprocessors
-      ...placeholderOptions.postprocessors,
-    ],
-  } as Required<MaskitoOptions>
+    return {
+      mask: mask,
+      overwriteMode: 'replace' as const,
+      preprocessors: [],
+      postprocessors: [...placeholderOptions.postprocessors],
+    } as MaskitoOptions
+  }, [mask, placeholder])
 
-  const maskedInputRef = useMaskito({ options: optionWithPlace })
+
+  const maskedInputRef = useMaskito({ options: maskitoOptions })
 
   return (
     <>
@@ -61,6 +93,7 @@ export function TimeInput({ onTimeChange, value }: OnTimeChange) {
         ref={maskedInputRef}
         value={timeStr}
         onInput={onInputChange}
+        placeholder={placeholder}
       />
     </>
   )

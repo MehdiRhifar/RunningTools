@@ -42,7 +42,6 @@ export function EquivalentPage() {
   }
 
   const handleTimeChange = (distance: number, newTime: Time) => {
-    console.log(distance, newTime)
     const newPurdyPoint = purdyPoints(distance, newTime)
     setPurdyPoint(newPurdyPoint)
     setTimes(updateTimes(newPurdyPoint))
@@ -72,7 +71,7 @@ export function EquivalentPage() {
                 <td>{distancesInfo[distance].name}</td>
                 <td>
                   <TimeInput
-                    value={times[distance]}
+                    timeChanged={times[distance]}
                     onTimeChange={(newValue) => {
                       handleTimeChange(
                         distancesInfo[distance].distance,
@@ -102,7 +101,7 @@ export function EquivalentPage() {
             </td>
             <td>
               <TimeInput
-                value={custom.time}
+                timeChanged={custom.time}
                 onTimeChange={(newValue) => {
                   handleTimeChange(custom.distance, newValue)
                 }}

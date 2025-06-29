@@ -9,6 +9,7 @@ import {
 } from './Percentage.reducer.ts'
 import { TimeCalculator } from '../../component/TimeCalculator.tsx'
 import { NumberInput } from '../../component/NumberInput.tsx'
+import { useMilliseconds } from '../../contexts/MillisecondsContext.tsx'
 
 export function PaceToTimePage() {
   const [state, dispatch] = useReducer(percentageReducer, {
@@ -20,6 +21,8 @@ export function PaceToTimePage() {
     distance: 0,
     timeForDist: defaultTime,
   })
+
+  const { isMillisecondsMode } = useMilliseconds()
 
   const handleDistance = (newDistance: number) => {
     dispatch({ type: PercentageActionType.SET_DISTANCE, payload: newDistance })
@@ -37,9 +40,9 @@ export function PaceToTimePage() {
   }
 
   return (
-    <div className={"main-container"}>
+    <div className={'main-container'}>
       <title>percentage</title>
-      <div className={'my-10'}>
+        <h2>{'Calcul du temps pour une allure donnée'}</h2>
         <div>
           <NumberInput
             className={'w-16'}
@@ -47,7 +50,6 @@ export function PaceToTimePage() {
             propsValue={state.percent}
             postfix={' %'}
           />{' '}
-        </div>
         <div className={'flex'}>
           <NumberInput
             className={'flex-1'}
@@ -69,14 +71,13 @@ export function PaceToTimePage() {
       <div>
         <DistanceInput onDistanceChange={handleDistance} />
       </div>
-      <div>Temps : {timeToString(state.timeForDist)}</div>
+      <div>Temps : {timeToString(state.timeForDist, isMillisecondsMode)}</div>
 
       <TimeCalculator
         distance={state.distance}
         time={state.timeForDist}
         speed={state.speedPercent}
       ></TimeCalculator>
-    </div>
-
+  </div>
   )
 }

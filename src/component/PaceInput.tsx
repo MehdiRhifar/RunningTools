@@ -46,7 +46,7 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
     const value = event.target.value.replace("'", '')
     const timeSplit = value.split('"')
     const [minutes, seconds] = timeSplit.map(parseIntSafe)
-    const pace2: Pace = { minutes: minutes, seconds: seconds }
+    const pace2: Pace = { minutes: minutes, seconds: seconds, milliseconds: 0 }
     onTimeChange(pace2)
   }
 
