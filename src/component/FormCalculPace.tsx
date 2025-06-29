@@ -17,7 +17,7 @@ function FormCalculPace({ onFormChange }: FormCalculPaceProps) {
 
   return (
     <>
-      <form>
+      <form className={""}>
         <DistanceInput onDistanceChange={setDistance}></DistanceInput>
         <label>Temps : </label>
         <TimeInput onTimeChange={setTime}></TimeInput>

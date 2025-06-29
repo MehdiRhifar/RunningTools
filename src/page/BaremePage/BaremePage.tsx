@@ -71,7 +71,7 @@ export function BaremePage() {
           <MenuHandler>
             <Button
               variant="outlined"
-              className=""
+              className="text-white"
               placeholder={'Search'}
             >
               {selectedDistances.length > 0

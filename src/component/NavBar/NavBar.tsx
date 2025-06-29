@@ -3,8 +3,10 @@ import { TimeToPacePage } from '../../page/TimeToPacePage/TimeToPacePage.tsx'
 import { PaceToTimePage } from '../../page/PercentagePage/PaceToTimePage.tsx'
 import { EquivalentPage } from '../../page/EquivalentPage/EquivalentPage.tsx'
 import './NavBar.css'
+import './Toggle.css'
 import { BaremePage } from '../../page/BaremePage/BaremePage.tsx'
 import { useMilliseconds } from '../../contexts/MillisecondsContext.tsx'
+import { useState } from 'react'
 
 export const routesConfig = [
   {
@@ -29,44 +31,71 @@ export const routesConfig = [
   },
 ]
 
+// NavBar.tsx - Version ultra simple
 export function NavBar() {
-
-  // const toggleMenu = () => {
-  //   setIsMenuOpen(!isMenuOpen);
-  // };
-
   const { isMillisecondsMode, toggleMillisecondsMode } = useMilliseconds();
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
 
   return (
     <nav className="navbar-container">
-      <ul className={`navbar-menu`}>
-        <li className="navbar-item">
-          <Link className="navbar-link" to={'/'}>
-            <img src="/logoRunner.svg" className="h-10" alt="logoRunner" />
-          </Link>
-        </li>
+      {/* Header toujours visible mais s'adapte avec CSS */}
+      <div className="navbar-header">
+        <Link className="navbar-logo" to="/" onClick={closeMenu}>
+          <img src="/logoRunner.svg" alt="logoRunner" />
+        </Link>
+
+        <button
+          className={`hamburger ${isMenuOpen ? 'active' : ''}`}
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      {/* Menu qui s'adapte avec CSS */}
+      <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
         {routesConfig.map(({ path, label }) => (
           <li key={path} className="navbar-item">
-            <Link className="navbar-link" to={path}>
+            <Link
+              className="navbar-link"
+              to={path}
+              onClick={closeMenu}
+            >
               {label}
             </Link>
           </li>
         ))}
-        <li className={'navbar-item'}>
-          <label className="inline-flex items-center cursor-pointer">
+
+        <li className="navbar-item navbar-toggle">
+          <label className="toggle-container">
             <input
               type="checkbox"
               checked={isMillisecondsMode}
               onChange={toggleMillisecondsMode}
-              className="sr-only peer"
+              className="toggle-input"
             />
-            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
-            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-              mode MS
-            </span>
+            <span className="toggle-slider"></span>
+            <span className="toggle-label">mode MS</span>
           </label>
         </li>
       </ul>
+
+      {/* Overlay pour fermer le menu */}
+      {isMenuOpen && (
+        <div className="navbar-overlay" onClick={closeMenu}></div>
+      )}
     </nav>
   )
 }
+

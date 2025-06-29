@@ -23,9 +23,9 @@ export function DistanceInput({ onDistanceChange, value }: OnDistanceChange) {
   }
 
   return (
-    <div className="flex">
+    <div className="">
       <NumberInput
-        className="flex-1"
+        className="custom-input"
         propsValue={distance}
         onNumberInput={handleDistanceChange}
         postfix=" m"
@@ -34,7 +34,7 @@ export function DistanceInput({ onDistanceChange, value }: OnDistanceChange) {
       <select
         value={distance}
         onChange={handleSelectChange}
-        className="flex-1 ml-1 custom-input"
+        className="ml-1 custom-input"
       >
         <option value="">Select Distance</option>
         {getKeys(distancesInfo).map((key) => (

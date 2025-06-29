@@ -1,0 +1,115 @@
+.navbar-toggle {
+    margin-top: auto;
+    border-top: 1px solid #555;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.toggle-input {
+    display: none; /* Cache l'input natif */
+}
+
+.toggle-slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: #374151; /* Gris foncé par défaut */
+    border-radius: 24px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Cercle à l'intérieur */
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* État activé */
+.toggle-input:checked + .toggle-slider {
+    background: #2563eb; /* Bleu quand activé */
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
+}
+
+.toggle-input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* Effet focus pour l'accessibilité */
+.toggle-container:focus-within .toggle-slider {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* Hover effect */
+.toggle-container:hover .toggle-slider {
+    transform: scale(1.05);
+}
+
+.toggle-label {
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+}
+
+/* ✅ TOGGLE PREMIUM avec animations */
+.toggle-slider {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    background: linear-gradient(145deg, #374151, #4b5563);
+    border: 2px solid #6b7280;
+    border-radius: 26px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(145deg, #ffffff, #f3f4f6);
+    border-radius: 50%;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+/* État activé avec gradient */
+.toggle-input:checked + .toggle-slider {
+    background: linear-gradient(145deg, #2563eb, #3b82f6);
+    border-color: #1d4ed8;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+}
+
+.toggle-input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+    background: linear-gradient(145deg, #ffffff, #e0e7ff);
+}
+
+/* Animation du label */
+.toggle-label {
+    color: #e5e7eb;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.toggle-input:checked ~ .toggle-label {
+    color: #93c5fd; /* Bleu clair quand activé */
+}
