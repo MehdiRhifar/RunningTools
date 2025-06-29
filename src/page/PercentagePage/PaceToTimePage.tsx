@@ -45,7 +45,7 @@ export function PaceToTimePage() {
         <h2>{'Calcul du temps pour une allure donnée'}</h2>
         <div>
           <NumberInput
-            className={'w-16'}
+            className={'w-20'}
             onNumberInput={handlePercent}
             propsValue={state.percent}
             postfix={' %'}
