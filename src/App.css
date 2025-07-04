@@ -1,6 +1,4 @@
 #root {
-    margin: auto auto;
-
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -12,6 +10,7 @@
 
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
+
     font-weight: 400;
 }
 
@@ -19,10 +18,20 @@
     --animation-error-duration: 300ms;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 html, body {
     margin: 0;
     padding: 0;
     height: 100%; /* Nécessaire pour que les enfants puissent occuper 100% de la hauteur */
+}
+
+label, p {
+    font-size: 20px;
 }
 
 .app-container {
@@ -74,32 +83,33 @@ table {
     padding: 2em;
 }
 
+.main-container {
+    display: flex;
+    flex-direction: column;           /* Colonne pour que les éléments s’empilent verticalement */
+
+    width: 100%;
+    max-width: 500px;
+    margin: 1px auto;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    justify-content: flex-start;
+    align-items: stretch;
+    text-align: center;
+}
+
 .read-the-docs {
     color: #888;
 }
 
-.main-container {
-    padding: 0;
-    margin: 0;
-    place-items: center;
-    min-width: 320px;
-
-    flex-grow: 1; /* Remplit tout l'espace disponible */
-    overflow: auto; /* Gère le débordement si le contenu est trop grand */
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
 .custom-input {
-    width: auto;
+    /*max-width: 95%;*/
+    box-sizing: border-box;
+    width: 100%;
     border: 1px solid #5a5a5a;
     border-radius: 10px;
     padding: 0.9rem;
-    margin: 0.3rem;
     outline: none;
     background-color: black;
 }

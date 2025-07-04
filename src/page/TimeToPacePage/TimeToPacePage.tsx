@@ -13,6 +13,7 @@ import {
   timeToPace,
 } from '../../interface/Time.tsx'
 import { TimeCalculator } from '../../component/TimeCalculator.tsx'
+import MainContainer from '../../component/MainContainer.tsx'
 
 export function TimeToPacePage() {
   // const url : string = "/"
@@ -39,7 +40,7 @@ export function TimeToPacePage() {
 
   return (
     <>
-      <div className={"main-container"}>
+      <MainContainer>
         <h2>{"Calcul de l'allure de course"}</h2>
         <FormCalculPace onFormChange={handleFormChange}></FormCalculPace>
         <p>
@@ -47,7 +48,7 @@ export function TimeToPacePage() {
         </p>
 
         <TimeCalculator distance={distance} time={time}></TimeCalculator>
-      </div>
+      </MainContainer>
     </>
   )
 }

@@ -10,6 +10,7 @@ import {
 import { TimeCalculator } from '../../component/TimeCalculator.tsx'
 import { NumberInput } from '../../component/NumberInput.tsx'
 import { useMilliseconds } from '../../contexts/MillisecondsContext.tsx'
+import MainContainer from '../../component/MainContainer.tsx'
 
 export function PaceToTimePage() {
   const [state, dispatch] = useReducer(percentageReducer, {
@@ -40,7 +41,7 @@ export function PaceToTimePage() {
   }
 
   return (
-    <div className={'main-container'}>
+    <MainContainer>
       <title>percentage</title>
         <h2>{'Calcul du temps pour une allure donnée'}</h2>
         <div>
@@ -78,6 +79,6 @@ export function PaceToTimePage() {
         time={state.timeForDist}
         speed={state.speedPercent}
       ></TimeCalculator>
-  </div>
+    </MainContainer>
   )
 }

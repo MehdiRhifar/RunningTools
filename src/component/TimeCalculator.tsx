@@ -26,7 +26,7 @@ export function TimeCalculator({ speed, distance, time }: TimeCalculatorProps) {
   }, [inputDistance, distance, time, speed])
 
   return (
-    <div className="p-2">
+    <div>
       <h2>Temps de passage</h2>
       <NumberInput postfix={' m'} onNumberInput={setInputDistance}></NumberInput>
       <p>

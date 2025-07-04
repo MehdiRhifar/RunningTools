@@ -16,13 +16,11 @@ function FormCalculPace({ onFormChange }: FormCalculPaceProps) {
   }, [onFormChange, distance, time])
 
   return (
-    <>
-      <form className={""}>
-        <DistanceInput onDistanceChange={setDistance}></DistanceInput>
-        <label>Temps : </label>
-        <TimeInput onTimeChange={setTime}></TimeInput>
-      </form>
-    </>
+    <form className="flex flex-col gap-1">
+      <DistanceInput onDistanceChange={setDistance} />
+      <label>Temps : </label>
+      <TimeInput onTimeChange={setTime} />
+    </form>
   )
 }
 

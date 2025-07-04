@@ -57,7 +57,7 @@ export function BaremePage() {
         <input
           type="text"
           id="table-search"
-          className="custom-input mb-4 top-0"
+          className="custom-input mb-4 top-0 max-w-60"
           placeholder="Recherche d'une distance"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)} // Met à jour le terme de recherche

@@ -11,6 +11,7 @@ import {
 import { paceToString } from '../../interface/Pace.tsx'
 import { equivalentPurdyPoint, purdyPoints } from '../../Utils/PurdyPoints.tsx'
 import { NumberInput } from '../../component/NumberInput.tsx'
+import MainContainer from '../../component/MainContainer.tsx'
 
 export function EquivalentPage() {
   const [purdyPoint, setPurdyPoint] = useState(0)
@@ -53,7 +54,8 @@ export function EquivalentPage() {
   }
 
   return (
-    <div className={"main-container"}>
+    // <div className={"main-container max-w-2xl"}>
+      <MainContainer>
       <h2>Page equivalence de performance</h2>
 
       <table className={'custom-table'}>
@@ -111,6 +113,7 @@ export function EquivalentPage() {
           </tr>
         </tbody>
       </table>
-    </div>
+      </MainContainer>
+    // </div>
   )
 }

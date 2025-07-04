@@ -23,7 +23,7 @@ export function DistanceInput({ onDistanceChange, value }: OnDistanceChange) {
   }
 
   return (
-    <div className="">
+    <div className="flex gap-1">
       <NumberInput
         className="custom-input"
         propsValue={distance}
