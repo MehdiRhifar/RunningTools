@@ -18,7 +18,7 @@ function FormCalculPace({ onFormChange }: FormCalculPaceProps) {
   return (
     <form className="flex flex-col gap-1">
       <DistanceInput onDistanceChange={setDistance} />
-      <label>Temps : </label>
+      <label className={"m-2"}>Temps : </label>
       <TimeInput onTimeChange={setTime} />
     </form>
   )

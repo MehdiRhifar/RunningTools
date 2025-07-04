@@ -46,12 +46,12 @@ export function PaceToTimePage() {
         <h2>{'Calcul du temps pour une allure donnée'}</h2>
         <div>
           <NumberInput
-            className={'w-20'}
+            className={'w-20 mb-2'}
             onNumberInput={handlePercent}
             propsValue={state.percent}
             postfix={' %'}
           />{' '}
-        <div className={'flex'}>
+        <div className={'flex gap-1'}>
           <NumberInput
             className={'flex-1'}
             onNumberInput={handleSpeed}
@@ -64,15 +64,15 @@ export function PaceToTimePage() {
             pace={state.pace}
           />
         </div>
-        <div>
+        <label className={"block m-2"}>
           {state.speedPercent.toFixed(2)} km/h -{' '}
           {paceToString(state.pacePercent)}
-        </div>
+        </label>
       </div>
       <div>
         <DistanceInput onDistanceChange={handleDistance} />
       </div>
-      <div>Temps : {timeToString(state.timeForDist, isMillisecondsMode)}</div>
+      <label className={"m-2"}>Temps : {timeToString(state.timeForDist, isMillisecondsMode)}</label>
 
       <TimeCalculator
         distance={state.distance}

@@ -30,8 +30,10 @@ html, body {
     height: 100%; /* Nécessaire pour que les enfants puissent occuper 100% de la hauteur */
 }
 
-label, p {
-    font-size: 20px;
+@media (min-width: 720px) {
+    body {
+        font-size: 20px;
+    }
 }
 
 .app-container {
@@ -117,14 +119,6 @@ table {
 .custom-input:focus {
     border: 1px solid #3182ce;
     box-shadow: 0 0 3px rgba(49, 130, 206, 0.5);
-}
-
-
-@media (max-width: 600px) {
-
-    h2 {
-        font-size: 10%;
-    }
 }
 
 

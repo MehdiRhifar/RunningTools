@@ -16,7 +16,6 @@ import { TimeCalculator } from '../../component/TimeCalculator.tsx'
 import MainContainer from '../../component/MainContainer.tsx'
 
 export function TimeToPacePage() {
-  // const url : string = "/"
 
   const [pace, setPace] = useState<Pace>(defaultPace)
   const [speed, setSpeed] = useState(0)
@@ -43,7 +42,7 @@ export function TimeToPacePage() {
       <MainContainer>
         <h2>{"Calcul de l'allure de course"}</h2>
         <FormCalculPace onFormChange={handleFormChange}></FormCalculPace>
-        <p>
+        <p className={"mt-2"}>
           {speed.toFixed(2)} km/h - {paceToString(pace)}
         </p>
 
