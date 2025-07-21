@@ -1,6 +1,6 @@
 .navbar-toggle {
-    margin-top: auto;
-    border-top: 1px solid #555;
+    /*margin-top: auto;*/
+    border-top: 2px solid #555;
 }
 
 .toggle-container {

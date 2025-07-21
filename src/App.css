@@ -28,11 +28,13 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%; /* Nécessaire pour que les enfants puissent occuper 100% de la hauteur */
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
 }
 
 @media (min-width: 720px) {
     body {
-        font-size: 20px;
+        font-size: 18px;
     }
 }
 
@@ -40,26 +42,6 @@ html, body {
     display: flex;
     flex-direction: column; /* Permet de placer le nav en haut et le contenu en bas */
     height: 100vh; /* 100% de la hauteur de la fenêtre */
-}
-
-.dark-bg {
-    background-color: var(--body-bg-color);
-    color: #fff;
-}
-.dark-bg-variant {
-    background-color: var(--body-bg-color-variant);
-    color: #fff;
-}
-
-
-.dark-bg {
-    background-color: var(--body-bg-color);
-    color: #fff;
-}
-
-body {
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
 }
 
 table {
