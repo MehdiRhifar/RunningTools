@@ -1,5 +1,9 @@
 import { Pace } from './Pace.tsx'
-import { formatMs, formatTime, totalMillisecondsToPace } from '../Utils/Utils.tsx'
+import {
+  formatMs,
+  formatTime,
+  totalMillisecondsToPace,
+} from '../Utils/Utils.tsx'
 
 export interface Time {
   hours: number
@@ -12,15 +16,25 @@ export const defaultTime: Time = {
   hours: 0,
   minutes: 0,
   seconds: 0,
-  milliseconds : 0
+  milliseconds: 0,
 }
 
 export function isZeroTime(time: Time): boolean {
-  return time.hours == 0 && time.minutes == 0 && time.seconds == 0 && time.milliseconds == 0
+  return (
+    time.hours == 0 &&
+    time.minutes == 0 &&
+    time.seconds == 0 &&
+    time.milliseconds == 0
+  )
 }
 
 export function timeToTotalMilliseconds(time: Time) {
-  return time.hours * 3_600_000 + time.minutes * 60_000 + time.seconds * 1000 + (time.milliseconds)
+  return (
+    time.hours * 3_600_000 +
+    time.minutes * 60_000 +
+    time.seconds * 1000 +
+    time.milliseconds
+  )
 }
 
 export function timeToPace(time: Time, distanceMetre: number): Pace {
@@ -29,21 +43,48 @@ export function timeToPace(time: Time, distanceMetre: number): Pace {
   return totalMillisecondsToPace(msPerKm)
 }
 
+function roundTime(time: Time, isMillisecondsMode: boolean) {
+  let adjustedTime = { ...time }
+
+  // Si on n'affiche pas les ms et qu'il y a >= 500ms, arrondir à la seconde supérieure
+  if (!isMillisecondsMode && adjustedTime.milliseconds >= 500) {
+    adjustedTime.seconds += 1
+
+    // Gérer les cascades
+    if (adjustedTime.seconds >= 60) {
+      adjustedTime.seconds = 0
+      adjustedTime.minutes += 1
+
+      if (adjustedTime.minutes >= 60) {
+        adjustedTime.minutes = 0
+        adjustedTime.hours += 1
+      }
+    }
+  }
+  return adjustedTime
+}
+
 export function timeToString(time: Time, isMillisecondsMode: boolean): string {
-  if (time.hours > 99) {
+  // Créer une copie pour ne pas modifier l'original
+  let adjustedTime = roundTime(time, isMillisecondsMode)
+
+  if (adjustedTime.hours > 99) {
     let time = '99:59:59'
-    if (isMillisecondsMode)
-      time += ".99"
+    if (isMillisecondsMode) time += '.99'
     return time
   }
-  let timeStrBase = formatTime(time.hours) +
+
+  let timeStrBase =
+    formatTime(adjustedTime.hours) +
     ':' +
-    formatTime(time.minutes) +
+    formatTime(adjustedTime.minutes) +
     ':' +
-    formatTime(time.seconds)
+    formatTime(adjustedTime.seconds)
+
   if (isMillisecondsMode) {
-    timeStrBase += "."+formatMs(time.milliseconds)
+    timeStrBase += '.' + formatMs(time.milliseconds)
   }
+
   return timeStrBase
 }
 
@@ -59,5 +100,7 @@ export function timeToStringMinimalist(time: Time) {
   } else if (time.minutes > 0) {
     return formatTime(time.minutes) + ':' + formatTime(time.seconds)
   }
-  return formatTime(time.seconds) + '.' + formatMs(Math.round(time.milliseconds))
+  return (
+    formatTime(time.seconds) + '.' + formatMs(Math.round(time.milliseconds))
+  )
 }

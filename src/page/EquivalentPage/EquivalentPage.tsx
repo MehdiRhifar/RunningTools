@@ -21,20 +21,20 @@ export function EquivalentPage() {
     time: defaultTime,
   })
 
-  const updateTimes = (newPurdyPoint: number) => {
+  const updateTimes = (newPurdyPoint: number, newDistance: number) => {
     const updatedTimes: Record<keyof DistanceInfo, Time> = { ...times }
     setPurdyPoint(newPurdyPoint)
 
-    getKeys(distancesInfo).map((key) => {
-      updatedTimes[key] = equivalentPurdyPoint(
-        newPurdyPoint,
-        distancesInfo[key].distance
-      )
-    })
-
+    getKeys(distancesInfo)
+      .filter((key) => distancesInfo[key].distance != newDistance)
+      .forEach((key) => {
+        updatedTimes[key] = equivalentPurdyPoint(
+          newPurdyPoint,
+          distancesInfo[key].distance
+        )
+      })
     return updatedTimes
   }
-
   const handleCustomDistanceChange = (newDistance: number) => {
     setCustom({
       distance: newDistance,
@@ -45,7 +45,7 @@ export function EquivalentPage() {
   const handleTimeChange = (distance: number, newTime: Time) => {
     const newPurdyPoint = purdyPoints(distance, newTime)
     setPurdyPoint(newPurdyPoint)
-    setTimes(updateTimes(newPurdyPoint))
+    setTimes(updateTimes(newPurdyPoint, distance))
 
     setCustom({
       distance: custom.distance,
@@ -55,7 +55,7 @@ export function EquivalentPage() {
 
   return (
     // <div className={"main-container max-w-2xl"}>
-      <MainContainer>
+    <MainContainer>
       <h2>Page equivalence de performance</h2>
 
       <table className={'custom-table'}>
@@ -113,7 +113,7 @@ export function EquivalentPage() {
           </tr>
         </tbody>
       </table>
-      </MainContainer>
+    </MainContainer>
     // </div>
   )
 }
