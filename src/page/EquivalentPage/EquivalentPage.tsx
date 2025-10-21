@@ -21,20 +21,27 @@ export function EquivalentPage() {
     time: defaultTime,
   })
 
-  const updateTimes = (newPurdyPoint: number, newDistance: number) => {
+  const updateTimes = (
+    newPurdyPoint: number,
+    newDistance: number,
+    newTime: Time
+  ) => {
     const updatedTimes: Record<keyof DistanceInfo, Time> = { ...times }
     setPurdyPoint(newPurdyPoint)
 
-    getKeys(distancesInfo)
-      .filter((key) => distancesInfo[key].distance != newDistance)
-      .forEach((key) => {
+    getKeys(distancesInfo).forEach((key) => {
+      if (distancesInfo[key].distance == newDistance) {
+        updatedTimes[key] = newTime
+      } else {
         updatedTimes[key] = equivalentPurdyPoint(
           newPurdyPoint,
           distancesInfo[key].distance
         )
-      })
+      }
+    })
     return updatedTimes
   }
+
   const handleCustomDistanceChange = (newDistance: number) => {
     setCustom({
       distance: newDistance,
@@ -45,7 +52,7 @@ export function EquivalentPage() {
   const handleTimeChange = (distance: number, newTime: Time) => {
     const newPurdyPoint = purdyPoints(distance, newTime)
     setPurdyPoint(newPurdyPoint)
-    setTimes(updateTimes(newPurdyPoint, distance))
+    setTimes(updateTimes(newPurdyPoint, distance, newTime))
 
     setCustom({
       distance: custom.distance,
