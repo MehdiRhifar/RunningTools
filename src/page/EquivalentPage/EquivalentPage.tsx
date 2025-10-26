@@ -62,7 +62,7 @@ export function EquivalentPage() {
 
   return (
     // <div className={"main-container max-w-2xl"}>
-    <MainContainer>
+    <MainContainer maxWidth="550px">
       <h2>Page equivalence de performance</h2>
 
       <table className={'custom-table'}>

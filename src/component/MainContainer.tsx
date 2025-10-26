@@ -3,9 +3,10 @@ import { useRef, useState, ReactNode, useLayoutEffect } from 'react'
 interface MainContainerProps {
   children: ReactNode;
   headerSelector?: string; // Sélecteur CSS pour le header
+  maxWidth?: string; // Nouvelle prop optionnelle
 }
 
-export function MainContainer({ children, headerSelector = '.navbar-container' }: MainContainerProps) {
+export function MainContainer({ children, headerSelector = '.navbar-container', maxWidth='500px' }: MainContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dynamicPaddingTop, setDynamicPaddingTop] = useState<number>(0);
 
@@ -55,6 +56,7 @@ export function MainContainer({ children, headerSelector = '.navbar-container' }
       className="main-container"
       style={{
         paddingTop: `${dynamicPaddingTop}px`,
+        maxWidth: maxWidth,
       }}
     >
       {children}
