@@ -18,6 +18,8 @@
     "@maskito/kit": "^2.0.0",
     "@maskito/react": "^2.0.0",
     "@material-tailwind/react": "^2.1.10",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "core-js": "^3.35.1",
     "npm": "^10.1.0",
     "react": "^18.2.0",
@@ -36,14 +38,14 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.2",
+    "gh-pages": "^6.3.0",
     "globals": "^15.12.0",
     "postcss": "^8.4.31",
     "prettier": "3.0.2",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",
     "typescript-eslint": "^8.15.0",
-    "vite": "6.3.4",
-    "gh-pages": "^6.3.0"
+    "vite": "6.3.4"
   },
   "prettier": {
     "trailingComma": "es5",
