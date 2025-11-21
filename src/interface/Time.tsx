@@ -98,7 +98,7 @@ export function timeToStringMinimalist(time: Time) {
       formatTime(time.seconds)
     )
   } else if (time.minutes > 0) {
-    return formatTime(time.minutes) + ':' + formatTime(time.seconds)
+    return formatTime(time.minutes) + "'" + formatTime(time.seconds) + '"'
   }
   return (
     formatTime(time.seconds) + '.' + formatMs(Math.round(time.milliseconds))

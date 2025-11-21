@@ -30,27 +30,16 @@ export const decimalSeparatorSymbol: string = Number(1000.1)
   .toLocaleString()
   .charAt(5)
 
-export function toLocaleString(value: number) {
-  return Number(value).toLocaleString()
-}
-
-export function secondsKmToKmHours(totalSeconds: number) {
-  if (totalSeconds == 0) {
-    return 0
-  }
-  return 3600 / totalSeconds
-}
-
 export function totalMillisecondsToPace(totalMilliseconds: number): Pace {
-  const minutes = Math.floor(totalMilliseconds / 60000);
-  const remainingMilliseconds = totalMilliseconds % 60000;
-  const seconds = Math.floor(remainingMilliseconds / 1000);
-  const milliseconds = remainingMilliseconds % 1000;
+  const minutes = Math.floor(totalMilliseconds / 60000)
+  const remainingMilliseconds = totalMilliseconds % 60000
+  const seconds = Math.floor(remainingMilliseconds / 1000)
+  const milliseconds = remainingMilliseconds % 1000
 
   return {
     minutes: minutes,
     seconds: seconds,
-    milliseconds: milliseconds
+    milliseconds: milliseconds,
   }
 }
 
@@ -61,29 +50,34 @@ export function totalMillisecondsToTime(totalMilliseconds: number): Time {
       hours: 99,
       minutes: 59,
       seconds: 59,
-      milliseconds: 999 // Correction: 999 ms max (pas 99)
+      milliseconds: 999, // Correction: 999 ms max (pas 99)
     }
   }
 
-  const hours = Math.floor(totalMilliseconds / 3_600_000);
-  const remainderAfterHours = totalMilliseconds % 3_600_000;
-  const minutes = Math.floor(remainderAfterHours / 60_000);
-  const remainderAfterMinutes = remainderAfterHours % 60_000;
-  const seconds = Math.floor(remainderAfterMinutes / 1_000);
-  const milliseconds = remainderAfterMinutes % 1_000;
+  const hours = Math.floor(totalMilliseconds / 3_600_000)
+  const remainderAfterHours = totalMilliseconds % 3_600_000
+  const minutes = Math.floor(remainderAfterHours / 60_000)
+  const remainderAfterMinutes = remainderAfterHours % 60_000
+  const seconds = Math.floor(remainderAfterMinutes / 1_000)
+  const milliseconds = remainderAfterMinutes % 1_000
 
   return {
     hours: hours,
     minutes: minutes,
     seconds: seconds,
-    milliseconds: milliseconds
+    milliseconds: milliseconds,
   }
 }
 
-
-export function toPace(speed: number): Pace {
-  const secPerKm = speedToMillisecondsPerKm(speed)
+export function toPace(speedkmh: number): Pace {
+  const secPerKm = speedToMillisecondsPerKm(speedkmh)
   return totalMillisecondsToPace(secPerKm)
+}
+
+export function timeMsToPace(distanceMetre: number, totalMs: number): Pace {
+  const msPerMetre = totalMs / distanceMetre
+  const msPerKm = msPerMetre * 1000
+  return totalMillisecondsToPace(msPerKm)
 }
 
 export function speedToMillisecondsPerKm(speed: number) {
