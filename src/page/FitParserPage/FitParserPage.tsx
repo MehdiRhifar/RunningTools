@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { MainContainer } from '../../component/MainContainer.tsx'
 import { ActivityCard } from '../../component/ActivityCard.tsx'
 import { InfiniteScrollLoader } from '../../component/InfiniteScrollLoader.tsx'
@@ -49,6 +49,7 @@ export function FitParserPage() {
   const [successMessage, setSuccessMessage] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [hasMoreActivities, setHasMoreActivities] = useState<boolean>(true)
+  const isLoadingRef = useRef<boolean>(false)
 
   // --- Auto-dismiss success message ---
 
@@ -111,10 +112,15 @@ export function FitParserPage() {
   // --- Charger les activités ---
 
   const loadActivities = async (page: number = 1, append: boolean = false) => {
-    // Éviter les chargements multiples
-    if (loadingActivities) return
+    // Protection contre les chargements multiples avec useRef (synchrone)
+    if (isLoadingRef.current) {
+      console.log('Loading already in progress, skipping...')
+      return
+    }
 
+    isLoadingRef.current = true
     setLoadingActivities(true)
+
     try {
       const userActivities = await stravaService.fetchUserActivities(
         page,
@@ -135,6 +141,7 @@ export function FitParserPage() {
     } catch (err) {
       console.error('Error loading activities:', err)
     } finally {
+      isLoadingRef.current = false
       setLoadingActivities(false)
     }
   }
