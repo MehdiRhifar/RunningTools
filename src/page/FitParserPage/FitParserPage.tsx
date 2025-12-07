@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { MainContainer } from '../../component/MainContainer.tsx'
 import { ActivityCard } from '../../component/ActivityCard.tsx'
 import { InfiniteScrollLoader } from '../../component/InfiniteScrollLoader.tsx'
+import { FileUpload } from '../../component/FileUpload.tsx'
 import { stravaService } from '../../services/stravaService'
 import { IntervalService } from '../../services/intervalService'
 import { StravaAdapter } from '../../adapters/stravaAdapter'
+import { FitAdapter } from '../../adapters/fitAdapter'
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll'
 import { PAGINATION, TIMEOUTS } from '../../constants/pagination'
 import type { IntervalSet } from '../../types/activity'
@@ -43,7 +45,6 @@ export function FitParserPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [activities, setActivities] = useState<StravaActivity[]>([])
   const [loadingActivities, setLoadingActivities] = useState<boolean>(false)
-  const [showManualInput, setShowManualInput] = useState<boolean>(false)
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null)
   const [updatingActivity, setUpdatingActivity] = useState<boolean>(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
@@ -159,6 +160,56 @@ export function FitParserPage() {
     rootMargin: PAGINATION.INFINITE_SCROLL_MARGIN,
     threshold: PAGINATION.INFINITE_SCROLL_THRESHOLD,
   })
+
+  // --- Import FIT ---
+
+  const handleFitFileImport = async (file: File) => {
+    setLoadingStrava(true)
+    setError('')
+    setCurrentActivityId(null)
+
+    try {
+      // Parser le fichier FIT
+      const fitData = await FitAdapter.parseFile(file)
+
+      // Vérifier qu'il y a des laps
+      if (!fitData.laps || fitData.laps.length === 0) {
+        setError('Aucun lap trouvé dans ce fichier FIT')
+        setLoadingStrava(false)
+        return
+      }
+
+      // Convertir les laps FIT en format normalisé
+      const normalizedLaps = FitAdapter.toLaps(fitData.laps)
+
+      // Extraire et grouper les intervalles
+      const intervals = IntervalService.extractIntervals(normalizedLaps)
+      if (intervals.length === 0) {
+        setError('Aucun intervalle valide détecté')
+        setLoadingStrava(false)
+        return
+      }
+
+      const grouped = IntervalService.groupIntervals(intervals)
+      setIntervalSets(grouped)
+
+      // Générer le résumé
+      const template = selectedTemplate === 'custom' ? customTemplate : TEMPLATES[selectedTemplate].template
+      const summary = IntervalService.generateWorkoutSummary(grouped, template)
+
+      setSessionTitle(summary.title)
+      setFormattedText(summary.formattedText)
+
+      setLoadingStrava(false)
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors de l'import du fichier FIT"
+      )
+      setLoadingStrava(false)
+    }
+  }
 
   // --- Import Strava ---
 
@@ -318,17 +369,73 @@ export function FitParserPage() {
   return (
     <MainContainer maxWidth="700px">
       <h2 className="text-2xl font-bold mb-6 text-center">
-        Analyse de séance Strava
+        Analyse de séance
       </h2>
+
+      {/* Import fichier FIT */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-4">Importer un fichier FIT</h3>
+        <FileUpload
+          onFileSelect={handleFitFileImport}
+          disabled={loadingStrava}
+          loading={loadingStrava}
+        />
+      </div>
+
+      {/* Séparateur */}
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-700"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-gray-800 text-gray-400">OU</span>
+        </div>
+      </div>
 
       {/* Import Strava */}
       <div className="mb-6">
         <h3 className="text-xl font-semibold mb-4">Importer depuis Strava</h3>
 
+        {/* Input URL Strava - Toujours visible */}
+        <div className="mb-6">
+          <label className="block text-gray-300 mb-2">
+            Collez le lien d'une activité Strava publique :
+          </label>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={stravaUrl}
+              onChange={(e) => setStravaUrl(e.target.value)}
+              placeholder="https://www.strava.com/activities/123456789"
+              className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleStravaImport()
+                }
+              }}
+            />
+            <button
+              onClick={handleStravaImport}
+              disabled={loadingStrava || !stravaUrl.trim() || !isAuthenticated}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              {loadingStrava ? 'Chargement...' : 'Importer'}
+            </button>
+          </div>
+
+          <p className="text-xs text-gray-400 mt-2">
+            {isAuthenticated
+              ? "Appuyez sur Entrée ou cliquez sur Importer"
+              : "⚠️ Vous devez être connecté à Strava pour importer une activité par URL"}
+          </p>
+        </div>
+
+        {/* Connexion Strava */}
         {!isAuthenticated ? (
           <div className="text-center">
             <p className="text-gray-300 mb-4">
-              Connectez-vous à Strava pour importer vos activités
+              Ou connectez-vous pour voir vos activités récentes
             </p>
             <button
               onClick={() => stravaService.startAuth()}
@@ -340,64 +447,23 @@ export function FitParserPage() {
         ) : (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-green-400 text-sm">✓ Connecté à Strava</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowManualInput(!showManualInput)}
-                  className="text-xs text-blue-400 hover:text-blue-300 underline"
-                >
-                  {showManualInput ? 'Voir mes activités' : 'Entrer une URL'}
-                </button>
-                <button
-                  onClick={() => {
-                    stravaService.clearTokens()
-                    setIsAuthenticated(false)
-                    setActivities([])
-                  }}
-                  className="text-xs text-gray-400 hover:text-gray-200 underline"
-                >
-                  Déconnecter
-                </button>
-              </div>
+              <span className="text-green-400 text-sm">✓ Connecté à Strava - Vos activités récentes</span>
+              <button
+                onClick={() => {
+                  stravaService.clearTokens()
+                  setIsAuthenticated(false)
+                  setActivities([])
+                }}
+                className="text-xs text-gray-400 hover:text-gray-200 underline"
+              >
+                Déconnecter
+              </button>
             </div>
 
-            {showManualInput ? (
-              <div>
-                <label className="block text-gray-300 mb-2">
-                  Collez le lien d'une activité Strava :
-                </label>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={stravaUrl}
-                    onChange={(e) => setStravaUrl(e.target.value)}
-                    placeholder="https://www.strava.com/activities/123456789"
-                    className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleStravaImport()
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={handleStravaImport}
-                    disabled={loadingStrava || !stravaUrl.trim()}
-                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"
-                  >
-                    {loadingStrava ? 'Chargement...' : 'Importer'}
-                  </button>
-                </div>
-
-                <p className="text-xs text-gray-400 mt-2">
-                  Appuyez sur Entrée ou cliquez sur Importer
-                </p>
-              </div>
-            ) : (
-              <div>
-                <label className="block text-gray-300 mb-3">
-                  Sélectionnez une activité :
-                </label>
+            <div>
+              <label className="block text-gray-300 mb-3">
+                Sélectionnez une activité :
+              </label>
 
                 {activities.length === 0 && !loadingActivities ? (
                   <div className="text-center text-gray-400 py-8">
@@ -425,7 +491,6 @@ export function FitParserPage() {
                   </>
                 )}
               </div>
-            )}
           </div>
         )}
       </div>
