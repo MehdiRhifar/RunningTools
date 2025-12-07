@@ -398,37 +398,37 @@ export function FitParserPage() {
 
         {/* Input URL Strava - Toujours visible */}
         <div className="mb-6">
-          <label className="block text-gray-300 mb-2">
-            Collez le lien d'une activité Strava publique :
-          </label>
+          {/*<label className="block text-gray-300 mb-2">*/}
+          {/*  Collez le lien d'une activité Strava publique :*/}
+          {/*</label>*/}
 
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={stravaUrl}
-              onChange={(e) => setStravaUrl(e.target.value)}
-              placeholder="https://www.strava.com/activities/123456789"
-              className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleStravaImport()
-                }
-              }}
-            />
-            <button
-              onClick={handleStravaImport}
-              disabled={loadingStrava || !stravaUrl.trim() || !isAuthenticated}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"
-            >
-              {loadingStrava ? 'Chargement...' : 'Importer'}
-            </button>
-          </div>
+          {/*<div className="flex gap-2">*/}
+          {/*  <input*/}
+          {/*    type="text"*/}
+          {/*    value={stravaUrl}*/}
+          {/*    onChange={(e) => setStravaUrl(e.target.value)}*/}
+          {/*    placeholder="https://www.strava.com/activities/123456789"*/}
+          {/*    className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"*/}
+          {/*    onKeyDown={(e) => {*/}
+          {/*      if (e.key === 'Enter') {*/}
+          {/*        handleStravaImport()*/}
+          {/*      }*/}
+          {/*    }}*/}
+          {/*  />*/}
+          {/*  <button*/}
+          {/*    onClick={handleStravaImport}*/}
+          {/*    disabled={loadingStrava || !stravaUrl.trim() || !isAuthenticated}*/}
+          {/*    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"*/}
+          {/*  >*/}
+          {/*    {loadingStrava ? 'Chargement...' : 'Importer'}*/}
+          {/*  </button>*/}
+          {/*</div>*/}
 
-          <p className="text-xs text-gray-400 mt-2">
-            {isAuthenticated
-              ? "Appuyez sur Entrée ou cliquez sur Importer"
-              : "⚠️ Vous devez être connecté à Strava pour importer une activité par URL"}
-          </p>
+          {/*<p className="text-xs text-gray-400 mt-2">*/}
+          {/*  {isAuthenticated*/}
+          {/*    ? "Appuyez sur Entrée ou cliquez sur Importer"*/}
+          {/*    : "⚠️ Vous devez être connecté à Strava pour importer une activité par URL"}*/}
+          {/*</p>*/}
         </div>
 
         {/* Connexion Strava */}
