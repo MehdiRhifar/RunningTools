@@ -1,28 +1,14 @@
-import React, { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MainContainer } from '../../component/MainContainer.tsx'
-import FitParser from 'fit-file-parser'
-import { timeMsToPace, totalMillisecondsToTime } from '../../Utils/Utils.tsx'
-import { timeToStringMinimalist } from '../../interface/Time.tsx'
-import { Pace, paceToString } from '../../interface/Pace.tsx'
-
-// --- Interfaces ---
-
-interface Interval {
-  distance: number
-  timeMilliseconds: number
-  pace: Pace
-  isRecovery: boolean
-}
-
-interface IntervalSet {
-  count: number
-  distance: number
-  times: number[] // Liste des temps d'effort
-  paces: Pace[] // Liste des allures d'effort
-  avgPace: Pace // Allure moyenne de la série
-  recoveryBetween?: number // Moyenne du repos INTRA série (ex: r1')
-  recoveryAfter?: number // Repos APRÈS la série (ex: R3')
-}
+import { ActivityCard } from '../../component/ActivityCard.tsx'
+import { InfiniteScrollLoader } from '../../component/InfiniteScrollLoader.tsx'
+import { stravaService } from '../../services/stravaService'
+import { IntervalService } from '../../services/intervalService'
+import { StravaAdapter } from '../../adapters/stravaAdapter'
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll'
+import { PAGINATION, TIMEOUTS } from '../../constants/pagination'
+import type { IntervalSet } from '../../types/activity'
+import type { StravaActivity } from '../../types/strava'
 
 type TemplateType = 'strava-temps' | 'strava-allures' | 'custom'
 
@@ -40,313 +26,249 @@ const TEMPLATES = {
   custom: { id: 'custom', label: 'Custom', template: '' },
 } as const
 
-const TITRE_TEMPLATE = '{countPrefix}{distance}m'
-
 const DEFAULT_CUSTOM_TEMPLATE = `{countPrefix}{distance}m : {times} ({avgPace}/km){recBetween}{recAfter}`
 
 export function FitParserPage() {
-  const [parsedData, setParsedData] = useState<any>(null)
   const [intervalSets, setIntervalSets] = useState<IntervalSet[]>([])
   const [sessionTitle, setSessionTitle] = useState<string>('')
   const [formattedText, setFormattedText] = useState<string>('')
   const [error, setError] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
   const [selectedTemplate, setSelectedTemplate] =
     useState<TemplateType>('strava-temps')
   const [customTemplate, setCustomTemplate] = useState<string>(
     DEFAULT_CUSTOM_TEMPLATE
   )
+  const [stravaUrl, setStravaUrl] = useState<string>('')
+  const [loadingStrava, setLoadingStrava] = useState<boolean>(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+  const [activities, setActivities] = useState<StravaActivity[]>([])
+  const [loadingActivities, setLoadingActivities] = useState<boolean>(false)
+  const [showManualInput, setShowManualInput] = useState<boolean>(false)
+  const [currentActivityId, setCurrentActivityId] = useState<string | null>(null)
+  const [updatingActivity, setUpdatingActivity] = useState<boolean>(false)
+  const [successMessage, setSuccessMessage] = useState<string>('')
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [hasMoreActivities, setHasMoreActivities] = useState<boolean>(true)
 
-  // --- Helpers d'affichage ---
+  // --- Auto-dismiss success message ---
 
-  const formatTimeForDisplay = (milliseconds: number): string => {
-    const time = totalMillisecondsToTime(milliseconds)
-    return timeToStringMinimalist(time)
-  }
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('')
+      }, TIMEOUTS.SUCCESS_MESSAGE_DURATION)
 
-  // --- Logique Métier ---
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage])
 
-  const roundToStandardDistance = (distance: number): number => {
-    let step: number
-    if (distance <= 1000) step = 50
-    else if (distance <= 3000) step = 100
-    else if (distance <= 10000) step = 200
-    else step = 500
-    return Math.round(distance / step) * step
-  }
+  // --- Initialisation Strava & OAuth Callback ---
 
-  const isRecoveryLap = (
-    distance: number,
-    timeMilliseconds: number
-  ): boolean => {
-    // Seuil arbitraire : si c'est très lent (> 5'30/km pour du fractionné) et court
-    // Note: Pour améliorer ça, il faudrait regarder le champ "intensity" du fichier FIT si dispo
-    const paceSecondsPerKm = (timeMilliseconds / 1000 / distance) * 1000
-    // On considère repos si distance < 400m ET allure lente,
-    // OU si la distance est quasi nulle (repos statique mal capté par GPS)
-    return distance < 50 || (distance < 400 && paceSecondsPerKm > 330)
-  }
+  useEffect(() => {
+    // Vérifier si tokens présents
+    const token = stravaService.getToken()
+    setIsAuthenticated(!!token)
 
-  const extractIntervalsFromLaps = (laps: any[]): Interval[] => {
-    const intervals: Interval[] = []
+    // Récupérer paramètres depuis callback OAuth
+    const params = new URLSearchParams(window.location.search)
 
-    for (const lap of laps) {
-      const rawDistance = lap.total_distance || 0
-      const timeSeconds = lap.total_timer_time || lap.total_elapsed_time || 0
-      const timeMilliseconds = timeSeconds * 1000
-
-      // Ignorer les laps aberrants (0s)
-      if (timeMilliseconds <= 0) continue
-
-      const isRecovery = isRecoveryLap(rawDistance, timeMilliseconds)
-
-      // Si c'est un repos, on garde la distance réelle (même si 0), sinon on arrondit
-      const distance: number = isRecovery
-        ? rawDistance
-        : roundToStandardDistance(rawDistance)
-
-      // Calcul du pace
-      const pace = timeMsToPace(distance, timeMilliseconds)
-
-      intervals.push({
-        distance,
-        timeMilliseconds,
-        pace,
-        isRecovery,
-      })
+    // Gérer les erreurs OAuth
+    if (params.get('auth_cancelled') === 'true') {
+      setError('Connexion à Strava annulée. Vous devez autoriser l\'application pour continuer.')
+      window.history.replaceState({}, '', window.location.pathname)
+      return
     }
 
-    return intervals
+    if (params.get('auth_error') === 'true') {
+      setError('Erreur lors de la connexion à Strava. Veuillez réessayer.')
+      window.history.replaceState({}, '', window.location.pathname)
+      return
+    }
+
+    // Récupérer tokens depuis callback OAuth
+    const accessToken = params.get('strava_access_token')
+    const refreshToken = params.get('strava_refresh_token')
+    const expiresAt = params.get('strava_expires_at')
+
+    if (accessToken && refreshToken && expiresAt) {
+      stravaService.saveTokens(
+        accessToken,
+        refreshToken,
+        parseInt(expiresAt)
+      )
+      setIsAuthenticated(true)
+
+      // Nettoyer URL
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+
+    // Charger les activités si authentifié
+    if (token || (accessToken && refreshToken && expiresAt)) {
+      loadActivities()
+    }
+  }, [])
+
+  // --- Charger les activités ---
+
+  const loadActivities = async (page: number = 1, append: boolean = false) => {
+    // Éviter les chargements multiples
+    if (loadingActivities) return
+
+    setLoadingActivities(true)
+    try {
+      const userActivities = await stravaService.fetchUserActivities(
+        page,
+        PAGINATION.ACTIVITIES_PER_PAGE
+      )
+
+      // Append ou replace selon le paramètre
+      if (append) {
+        setActivities((prev) => [...prev, ...userActivities])
+      } else {
+        setActivities(userActivities)
+      }
+
+      setCurrentPage(page)
+
+      // Si on a moins d'activités que demandé, il n'y a plus de pages
+      setHasMoreActivities(userActivities.length === PAGINATION.ACTIVITIES_PER_PAGE)
+    } catch (err) {
+      console.error('Error loading activities:', err)
+    } finally {
+      setLoadingActivities(false)
+    }
   }
 
-  const groupIntervals = (intervals: Interval[]): IntervalSet[] => {
-    const sets: IntervalSet[] = []
+  const loadMoreActivities = useCallback(() => {
+    loadActivities(currentPage + 1, true)
+  }, [currentPage])
 
-    // Variables temporaires pour construire le set en cours
-    let currentSet: {
-      distance: number
-      timesMs: number[]
-      paces: Pace[]
-      internalRecoveries: number[] // Liste des repos ENTRE les répétitions du set
-    } | null = null
+  // --- Infinite scroll ---
 
-    let pendingRecovery: number | null = null // Stocke un repos en attente d'attribution
+  const observerTarget = useInfiniteScroll({
+    hasMore: hasMoreActivities,
+    isLoading: loadingActivities,
+    onLoadMore: loadMoreActivities,
+    rootMargin: PAGINATION.INFINITE_SCROLL_MARGIN,
+    threshold: PAGINATION.INFINITE_SCROLL_THRESHOLD,
+  })
 
-    intervals.forEach((interval) => {
-      if (interval.isRecovery) {
-        pendingRecovery = interval.timeMilliseconds
+  // --- Import Strava ---
+
+  const handleActivitySelect = async (activityId: string) => {
+    setLoadingStrava(true)
+    setError('')
+    setCurrentActivityId(activityId)
+
+    try {
+      // Récupérer les données depuis Strava
+      const data = await stravaService.fetchActivityById(activityId)
+
+      // Vérifier qu'il y a des laps
+      if (!data.laps || data.laps.length === 0) {
+        setError('Aucun lap trouvé dans cette activité')
+        setLoadingStrava(false)
         return
       }
 
-      // Cas 1 : Continuation de la série en cours
-      if (currentSet && interval.distance === currentSet.distance) {
-        // Si on avait un repos en attente, c'est un repos "ENTRE" les répétitions
-        if (pendingRecovery !== null) {
-          currentSet.internalRecoveries.push(pendingRecovery)
-          pendingRecovery = null
-        }
+      // Utiliser l'adaptateur Strava pour normaliser les laps
+      const normalizedLaps = StravaAdapter.toLaps(data.laps)
 
-        currentSet.timesMs.push(interval.timeMilliseconds)
-        currentSet.paces.push(interval.pace)
+      // Extraire et grouper les intervalles
+      const intervals = IntervalService.extractIntervals(normalizedLaps)
+      if (intervals.length === 0) {
+        setError('Aucun intervalle valide détecté')
+        setLoadingStrava(false)
+        return
       }
-      // Cas 2 : Nouvelle série (distance différente ou première série)
-      else {
-        // Si une série était déjà en cours, on la clôture
-        if (currentSet) {
-          finalizeAndPushSet(sets, currentSet, pendingRecovery)
-        }
 
-        currentSet = {
-          distance: interval.distance,
-          timesMs: [interval.timeMilliseconds],
-          paces: [interval.pace],
-          internalRecoveries: [],
-        }
-        pendingRecovery = null
-      }
-    })
+      const grouped = IntervalService.groupIntervals(intervals)
+      setIntervalSets(grouped)
 
-    // Ne pas oublier de pousser la toute dernière série à la fin de la boucle
-    if (currentSet) {
-      finalizeAndPushSet(sets, currentSet, pendingRecovery)
-    }
+      // Générer le résumé
+      const template = selectedTemplate === 'custom' ? customTemplate : TEMPLATES[selectedTemplate].template
+      const summary = IntervalService.generateWorkoutSummary(grouped, template)
 
-    return sets
-  }
+      setSessionTitle(summary.title)
+      setFormattedText(summary.formattedText)
 
-  // Helper pour calculer les moyennes et fermer le set proprement
-  const finalizeAndPushSet = (
-    sets: IntervalSet[],
-    currentSet: {
-      distance: number
-      timesMs: number[]
-      paces: Pace[]
-      internalRecoveries: number[]
-    },
-    lastPendingRecovery: number | null
-  ) => {
-    const count = currentSet.timesMs.length
-
-    // Calcul Allure Moyenne
-    const totalTime = currentSet.timesMs.reduce((a, b) => a + b, 0)
-    const totalDist = currentSet.distance * count
-    const avgPace = timeMsToPace(totalDist, totalTime)
-
-    // Calcul Repos Moyen (Entre les répétitions)
-    let recoveryBetween: number | undefined = undefined
-    if (currentSet.internalRecoveries.length > 0) {
-      const totalRec = currentSet.internalRecoveries.reduce((a, b) => a + b, 0)
-      recoveryBetween = totalRec / currentSet.internalRecoveries.length
-    }
-
-    // Le repos "Après" est le dernier repos rencontré avant le changement de distance
-    const recoveryAfter =
-      lastPendingRecovery !== null ? lastPendingRecovery : undefined
-
-    sets.push({
-      count,
-      distance: currentSet.distance,
-      times: currentSet.timesMs,
-      paces: currentSet.paces,
-      avgPace,
-      recoveryBetween,
-      recoveryAfter,
-    })
-  }
-
-  // --- Génération de texte ---
-
-  const replaceTemplateVariables = (
-    template: string,
-    set: IntervalSet
-  ): string => {
-    const distanceInM = set.distance
-    const timesStr = set.times.map(formatTimeForDisplay).join(' - ')
-    const pacesStr = set.paces.map(paceToString).join(' - ')
-
-    // Formatage des repos
-    const recBetweenStr = set.recoveryBetween
-      ? ` R${formatTimeForDisplay(set.recoveryBetween)}`
-      : ''
-    const recAfterStr = set.recoveryAfter
-      ? ` RS=${formatTimeForDisplay(set.recoveryAfter)}`
-      : ''
-
-    // Préfixe conditionnel pour count (affiche "10 x " si count > 1, rien sinon)
-    const countPrefix = set.count > 1 ? `${set.count} x ` : ''
-
-    let result = template
-    result = result.replace(/{countPrefix}/g, countPrefix)
-    result = result.replace(/{count}/g, set.count.toString())
-    result = result.replace(/{distance}/g, distanceInM.toString())
-    result = result.replace(/{times}/g, timesStr)
-    result = result.replace(/{paces}/g, pacesStr)
-    result = result.replace(/{avgPace}/g, paceToString(set.avgPace))
-    result = result.replace(/{recBetween}/g, recBetweenStr)
-    result = result.replace(/{recAfter}/g, recAfterStr)
-
-    return result
-  }
-
-  const generateSessionTitle = (sets: IntervalSet[]): string => {
-    const titles = sets.map((set) =>
-      replaceTemplateVariables(TITRE_TEMPLATE, set)
-    )
-    return titles.join(' + ')
-  }
-
-  const generateFormattedTextWithTemplate = (
-    sets: IntervalSet[],
-    templateType: TemplateType,
-    customTemplateOverride?: string
-  ): string => {
-    let templateStr: string
-
-    if (templateType === 'custom') {
-      templateStr = customTemplateOverride ?? customTemplate
-    } else {
-      templateStr = TEMPLATES[templateType].template
-    }
-
-    const lines = sets.map((set) => replaceTemplateVariables(templateStr, set))
-    return lines.join('\n')
-  }
-
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    setLoading(true)
-    setError('')
-    setParsedData(null)
-    setIntervalSets([])
-    setSessionTitle('')
-    setFormattedText('')
-
-    try {
-      const arrayBuffer = await file.arrayBuffer()
-      const fitParser = new FitParser({
-        force: true,
-        speedUnit: 'm/s',
-        lengthUnit: 'm',
-        temperatureUnit: 'celsius',
-        elapsedRecordField: true,
-        mode: 'list',
-      })
-
-      fitParser.parse(arrayBuffer, (error: any, data: any) => {
-        if (error) {
-          setError(`Erreur lors du parsing : ${error.message}`)
-          setLoading(false)
-          return
-        }
-
-        setParsedData(data)
-        const laps = data.laps || []
-
-        if (laps.length === 0) {
-          setError('Aucun lap trouvé dans le fichier .fit')
-          setLoading(false)
-          return
-        }
-
-        const detectedIntervals = extractIntervalsFromLaps(laps)
-
-        if (detectedIntervals.length === 0) {
-          setError('Aucun intervalle valide détecté')
-          setLoading(false)
-          return
-        }
-
-        // Nouvelle logique de regroupement
-        const grouped = groupIntervals(detectedIntervals)
-        setIntervalSets(grouped)
-
-        const title = generateSessionTitle(grouped)
-        setSessionTitle(title)
-
-        const text = generateFormattedTextWithTemplate(
-          grouped,
-          selectedTemplate
-        )
-        setFormattedText(text)
-
-        setLoading(false)
-      })
+      setLoadingStrava(false)
     } catch (err) {
       setError(
-        `Erreur : ${err instanceof Error ? err.message : 'Erreur inconnue'}`
+        err instanceof Error
+          ? err.message
+          : "Erreur lors de l'import Strava"
       )
-      setLoading(false)
+      setLoadingStrava(false)
     }
   }
+
+  const handleStravaImport = async () => {
+    if (!stravaUrl.trim()) {
+      setError('Veuillez entrer une URL Strava')
+      return
+    }
+
+    setLoadingStrava(true)
+    setError('')
+
+    try {
+      // Extraire l'ID de l'activité depuis l'URL
+      const activityId = stravaService.extractActivityId(stravaUrl)
+      if (activityId) {
+        setCurrentActivityId(activityId)
+      }
+
+      // Récupérer les données depuis Strava
+      const data = await stravaService.fetchActivity(stravaUrl)
+
+      // Vérifier qu'il y a des laps
+      if (!data.laps || data.laps.length === 0) {
+        setError('Aucun lap trouvé dans cette activité')
+        setLoadingStrava(false)
+        return
+      }
+
+      // Utiliser l'adaptateur Strava pour normaliser les laps
+      const normalizedLaps = StravaAdapter.toLaps(data.laps)
+
+      // Extraire et grouper les intervalles
+      const intervals = IntervalService.extractIntervals(normalizedLaps)
+      if (intervals.length === 0) {
+        setError('Aucun intervalle valide détecté')
+        setLoadingStrava(false)
+        return
+      }
+
+      const grouped = IntervalService.groupIntervals(intervals)
+      setIntervalSets(grouped)
+
+      // Générer le résumé
+      const template = selectedTemplate === 'custom' ? customTemplate : TEMPLATES[selectedTemplate].template
+      const summary = IntervalService.generateWorkoutSummary(grouped, template)
+
+      setSessionTitle(summary.title)
+      setFormattedText(summary.formattedText)
+
+      setLoadingStrava(false)
+      setStravaUrl('') // Clear input
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors de l'import Strava"
+      )
+      setLoadingStrava(false)
+    }
+  }
+
+  // --- Helpers UI ---
 
   const handleTemplateChange = (template: TemplateType) => {
     setSelectedTemplate(template)
     if (intervalSets.length > 0) {
-      const text = generateFormattedTextWithTemplate(intervalSets, template)
+      const templateStr = template === 'custom' ? customTemplate : TEMPLATES[template].template
+      const text = IntervalService.generateFormattedText(intervalSets, templateStr)
       setFormattedText(text)
     }
   }
@@ -357,44 +279,165 @@ export function FitParserPage() {
       : formattedText
     navigator.clipboard
       .writeText(fullText)
-      .then(() => alert('Texte copié !'))
-      .catch(() => alert('Erreur lors de la copie'))
+      .then(() => setSuccessMessage('📋 Texte copié dans le presse-papier !'))
+      .catch(() => setError('Erreur lors de la copie'))
+  }
+
+  const handleUpdateActivity = async () => {
+    if (!currentActivityId) {
+      setError('Aucune activité sélectionnée')
+      return
+    }
+
+    setUpdatingActivity(true)
+    setError('')
+    setSuccessMessage('')
+
+    try {
+      const description = `${formattedText}\n\nmade by runningtools.fr`
+      await stravaService.updateActivity(currentActivityId, sessionTitle, description)
+      setSuccessMessage('✅ Activité mise à jour sur Strava avec succès !')
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Erreur lors de la mise à jour de l'activité"
+      )
+    } finally {
+      setUpdatingActivity(false)
+    }
   }
 
   return (
     <MainContainer maxWidth="700px">
       <h2 className="text-2xl font-bold mb-6 text-center">
-        Parser de fichier .FIT
+        Analyse de séance Strava
       </h2>
 
+      {/* Import Strava */}
       <div className="mb-6">
-        <p className="text-gray-300 mb-4 text-center">
-          Importez un fichier .fit pour générer un résumé de votre séance
-          d'entraînement
-        </p>
+        <h3 className="text-xl font-semibold mb-4">Importer depuis Strava</h3>
 
-        <div className="flex justify-center">
-          <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-            Choisir un fichier .fit
-            <input
-              type="file"
-              accept=".fit"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-          </label>
-        </div>
+        {!isAuthenticated ? (
+          <div className="text-center">
+            <p className="text-gray-300 mb-4">
+              Connectez-vous à Strava pour importer vos activités
+            </p>
+            <button
+              onClick={() => stravaService.startAuth()}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              Connecter Strava
+            </button>
+          </div>
+        ) : (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-green-400 text-sm">✓ Connecté à Strava</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowManualInput(!showManualInput)}
+                  className="text-xs text-blue-400 hover:text-blue-300 underline"
+                >
+                  {showManualInput ? 'Voir mes activités' : 'Entrer une URL'}
+                </button>
+                <button
+                  onClick={() => {
+                    stravaService.clearTokens()
+                    setIsAuthenticated(false)
+                    setActivities([])
+                  }}
+                  className="text-xs text-gray-400 hover:text-gray-200 underline"
+                >
+                  Déconnecter
+                </button>
+              </div>
+            </div>
+
+            {showManualInput ? (
+              <div>
+                <label className="block text-gray-300 mb-2">
+                  Collez le lien d'une activité Strava :
+                </label>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={stravaUrl}
+                    onChange={(e) => setStravaUrl(e.target.value)}
+                    placeholder="https://www.strava.com/activities/123456789"
+                    className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleStravaImport()
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleStravaImport}
+                    disabled={loadingStrava || !stravaUrl.trim()}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"
+                  >
+                    {loadingStrava ? 'Chargement...' : 'Importer'}
+                  </button>
+                </div>
+
+                <p className="text-xs text-gray-400 mt-2">
+                  Appuyez sur Entrée ou cliquez sur Importer
+                </p>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-gray-300 mb-3">
+                  Sélectionnez une activité :
+                </label>
+
+                {activities.length === 0 && !loadingActivities ? (
+                  <div className="text-center text-gray-400 py-8">
+                    Aucune activité de course trouvée
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {activities.map((activity) => (
+                        <ActivityCard
+                          key={activity.id}
+                          activity={activity}
+                          onSelect={handleActivitySelect}
+                          disabled={loadingStrava}
+                        />
+                      ))}
+
+                      <InfiniteScrollLoader
+                        isLoading={loadingActivities}
+                        hasMore={hasMoreActivities}
+                        itemCount={activities.length}
+                        observerRef={observerTarget}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
-
-      {loading && (
-        <div className="text-center text-gray-300 my-4">
-          Analyse en cours...
-        </div>
-      )}
 
       {error && (
         <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
           {error}
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="bg-green-500/20 border border-green-500 text-green-200 px-4 py-3 rounded mb-4 flex items-center justify-between">
+          <span>{successMessage}</span>
+          <button
+            onClick={() => setSuccessMessage('')}
+            className="text-green-200 hover:text-green-100 ml-4"
+          >
+            ✕
+          </button>
         </div>
       )}
 
@@ -453,9 +496,8 @@ export function FitParserPage() {
                   const newTemplate = e.target.value
                   setCustomTemplate(newTemplate)
                   if (intervalSets.length > 0) {
-                    const text = generateFormattedTextWithTemplate(
+                    const text = IntervalService.generateFormattedText(
                       intervalSets,
-                      'custom',
                       newTemplate
                     )
                     setFormattedText(text)
@@ -481,56 +523,70 @@ export function FitParserPage() {
             </div>
           </div>
 
-          <button
-            onClick={copyToClipboard}
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-          >
-            Copier pour Strava
-          </button>
-        </div>
-      )}
-
-      {intervalSets.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-3">
-            Détails des intervalles :
-          </h3>
-          <div className="space-y-4">
-            {intervalSets.map((set, index) => (
-              <div key={index} className="bg-gray-800 p-4 rounded-lg">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-semibold text-lg">
-                    {set.count} x {set.distance}m
-                    {/* Affichage discret du repos si présent */}
-                    {(set.recoveryBetween || set.recoveryAfter) && (
-                      <span className="text-sm text-gray-400 font-normal ml-2">
-                        {set.recoveryBetween
-                          ? `(r${formatTimeForDisplay(set.recoveryBetween)}) `
-                          : ''}
-                        {set.recoveryAfter
-                          ? `(R${formatTimeForDisplay(set.recoveryAfter)})`
-                          : ''}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-gray-400">
-                    Allure moy: {paceToString(set.avgPace)}/km
-                  </div>
-                </div>
-                <div className="text-gray-300">
-                  Temps : {set.times.map(formatTimeForDisplay).join(' - ')}
-                </div>
-              </div>
-            ))}
+          <div className="flex gap-3">
+            {currentActivityId && isAuthenticated ? (
+              <>
+                <button
+                  onClick={handleUpdateActivity}
+                  disabled={updatingActivity}
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
+                >
+                  {updatingActivity ? 'Mise à jour...' : '🚀 Mettre à jour sur Strava'}
+                </button>
+                <button
+                  onClick={copyToClipboard}
+                  className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                >
+                  📋 Copier
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={copyToClipboard}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              >
+                📋 Copier pour Strava
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      {parsedData && parsedData.laps && (
-        <div className="mt-8 text-sm text-gray-400">
-          <p>Fichier analysé : {parsedData.laps.length} laps détectés</p>
-        </div>
-      )}
+      {/*{intervalSets.length > 0 && (*/}
+      {/*  <div className="mt-8">*/}
+      {/*    <h3 className="text-xl font-semibold mb-3">*/}
+      {/*      Détails des intervalles :*/}
+      {/*    </h3>*/}
+      {/*    <div className="space-y-4">*/}
+      {/*      {intervalSets.map((set, index) => (*/}
+      {/*        <div key={index} className="bg-gray-800 p-4 rounded-lg">*/}
+      {/*          <div className="flex justify-between items-start mb-2">*/}
+      {/*            <div className="font-semibold text-lg">*/}
+      {/*              {set.count} x {set.distance}m*/}
+      {/*              /!* Affichage discret du repos si présent *!/*/}
+      {/*              {(set.recoveryBetween || set.recoveryAfter) && (*/}
+      {/*                <span className="text-sm text-gray-400 font-normal ml-2">*/}
+      {/*                  {set.recoveryBetween*/}
+      {/*                    ? `(r${formatTimeForDisplay(set.recoveryBetween)}) `*/}
+      {/*                    : ''}*/}
+      {/*                  {set.recoveryAfter*/}
+      {/*                    ? `(R${formatTimeForDisplay(set.recoveryAfter)})`*/}
+      {/*                    : ''}*/}
+      {/*                </span>*/}
+      {/*              )}*/}
+      {/*            </div>*/}
+      {/*            <div className="text-gray-400">*/}
+      {/*              Allure moy: {paceToString(set.avgPace)}/km*/}
+      {/*            </div>*/}
+      {/*          </div>*/}
+      {/*          <div className="text-gray-300">*/}
+      {/*            Temps : {set.times.map(formatTimeForDisplay).join(' - ')}*/}
+      {/*          </div>*/}
+      {/*        </div>*/}
+      {/*      ))}*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*)}*/}
     </MainContainer>
   )
 }

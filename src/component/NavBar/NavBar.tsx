@@ -31,8 +31,8 @@ export const routesConfig = [
     component: <BaremePage></BaremePage>,
   },
   {
-    path: '/fit-parser',
-    label: 'FIT Parser',
+    path: '/strava-analysis',
+    label: 'Analyse Strava',
     component: <FitParserPage></FitParserPage>,
   },
 ]

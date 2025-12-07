@@ -43,6 +43,16 @@ export function totalMillisecondsToPace(totalMilliseconds: number): Pace {
   }
 }
 
+export function timeMsToPace(distance: number, timeMs: number): Pace {
+  if (distance === 0) {
+    return { minutes: 0, seconds: 0, milliseconds: 0 }
+  }
+
+  // Calculer l'allure par km (temps pour 1000m)
+  const paceMs = (timeMs / distance) * 1000
+  return totalMillisecondsToPace(paceMs)
+}
+
 export function totalMillisecondsToTime(totalMilliseconds: number): Time {
   if (totalMilliseconds < 0 || totalMilliseconds > 359_999_000) {
     // inf ou sup au min/max (converti en ms)

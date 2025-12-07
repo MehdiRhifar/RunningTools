@@ -1,0 +1,10 @@
+export const PAGINATION = {
+  ACTIVITIES_PER_PAGE: 10,
+  INFINITE_SCROLL_MARGIN: '200px',
+  INFINITE_SCROLL_THRESHOLD: 0.1,
+  MIN_ITEMS_FOR_END_MESSAGE: 10,
+} as const
+
+export const TIMEOUTS = {
+  SUCCESS_MESSAGE_DURATION: 4000, // 4 seconds
+} as const
