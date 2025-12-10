@@ -383,246 +383,246 @@ export function FitParserPage() {
       </div>
 
       {/* Séparateur */}
-      <div className="relative mb-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-700"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-gray-800 text-gray-400">OU</span>
-        </div>
-      </div>
+      {/*<div className="relative mb-6">*/}
+      {/*  <div className="absolute inset-0 flex items-center">*/}
+      {/*    <div className="w-full border-t border-gray-700"></div>*/}
+      {/*  </div>*/}
+      {/*  <div className="relative flex justify-center text-sm">*/}
+      {/*    <span className="px-2 bg-gray-800 text-gray-400">OU</span>*/}
+      {/*  </div>*/}
+      {/*</div>*/}
 
-      {/* Import Strava */}
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-4">Importer depuis Strava</h3>
+      {/*/!* Import Strava *!/*/}
+      {/*<div className="mb-6">*/}
+      {/*  <h3 className="text-xl font-semibold mb-4">Importer depuis Strava</h3>*/}
 
-        {/* Input URL Strava - Toujours visible */}
-        <div className="mb-6">
-          {/*<label className="block text-gray-300 mb-2">*/}
-          {/*  Collez le lien d'une activité Strava publique :*/}
-          {/*</label>*/}
+      {/*  /!* Input URL Strava - Toujours visible *!/*/}
+      {/*  <div className="mb-6">*/}
+      {/*    /!*<label className="block text-gray-300 mb-2">*!/*/}
+      {/*    /!*  Collez le lien d'une activité Strava publique :*!/*/}
+      {/*    /!*</label>*!/*/}
 
-          {/*<div className="flex gap-2">*/}
-          {/*  <input*/}
-          {/*    type="text"*/}
-          {/*    value={stravaUrl}*/}
-          {/*    onChange={(e) => setStravaUrl(e.target.value)}*/}
-          {/*    placeholder="https://www.strava.com/activities/123456789"*/}
-          {/*    className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"*/}
-          {/*    onKeyDown={(e) => {*/}
-          {/*      if (e.key === 'Enter') {*/}
-          {/*        handleStravaImport()*/}
-          {/*      }*/}
-          {/*    }}*/}
-          {/*  />*/}
-          {/*  <button*/}
-          {/*    onClick={handleStravaImport}*/}
-          {/*    disabled={loadingStrava || !stravaUrl.trim() || !isAuthenticated}*/}
-          {/*    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"*/}
-          {/*  >*/}
-          {/*    {loadingStrava ? 'Chargement...' : 'Importer'}*/}
-          {/*  </button>*/}
-          {/*</div>*/}
+      {/*    /!*<div className="flex gap-2">*!/*/}
+      {/*    /!*  <input*!/*/}
+      {/*    /!*    type="text"*!/*/}
+      {/*    /!*    value={stravaUrl}*!/*/}
+      {/*    /!*    onChange={(e) => setStravaUrl(e.target.value)}*!/*/}
+      {/*    /!*    placeholder="https://www.strava.com/activities/123456789"*!/*/}
+      {/*    /!*    className="flex-1 bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none"*!/*/}
+      {/*    /!*    onKeyDown={(e) => {*!/*/}
+      {/*    /!*      if (e.key === 'Enter') {*!/*/}
+      {/*    /!*        handleStravaImport()*!/*/}
+      {/*    /!*      }*!/*/}
+      {/*    /!*    }}*!/*/}
+      {/*    /!*  />*!/*/}
+      {/*    /!*  <button*!/*/}
+      {/*    /!*    onClick={handleStravaImport}*!/*/}
+      {/*    /!*    disabled={loadingStrava || !stravaUrl.trim() || !isAuthenticated}*!/*/}
+      {/*    /!*    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed whitespace-nowrap"*!/*/}
+      {/*    /!*  >*!/*/}
+      {/*    /!*    {loadingStrava ? 'Chargement...' : 'Importer'}*!/*/}
+      {/*    /!*  </button>*!/*/}
+      {/*    /!*</div>*!/*/}
 
-          {/*<p className="text-xs text-gray-400 mt-2">*/}
-          {/*  {isAuthenticated*/}
-          {/*    ? "Appuyez sur Entrée ou cliquez sur Importer"*/}
-          {/*    : "⚠️ Vous devez être connecté à Strava pour importer une activité par URL"}*/}
-          {/*</p>*/}
-        </div>
+      {/*    /!*<p className="text-xs text-gray-400 mt-2">*!/*/}
+      {/*    /!*  {isAuthenticated*!/*/}
+      {/*    /!*    ? "Appuyez sur Entrée ou cliquez sur Importer"*!/*/}
+      {/*    /!*    : "⚠️ Vous devez être connecté à Strava pour importer une activité par URL"}*!/*/}
+      {/*    /!*</p>*!/*/}
+      {/*  </div>*/}
 
-        {/* Connexion Strava */}
-        {!isAuthenticated ? (
-          <div className="text-center">
-            <p className="text-gray-300 mb-4">
-              Ou connectez-vous pour voir vos activités récentes
-            </p>
-            <button
-              onClick={() => stravaService.startAuth()}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-            >
-              Connecter Strava
-            </button>
-          </div>
-        ) : (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-green-400 text-sm">✓ Connecté à Strava - Vos activités récentes</span>
-              <button
-                onClick={() => {
-                  stravaService.clearTokens()
-                  setIsAuthenticated(false)
-                  setActivities([])
-                }}
-                className="text-xs text-gray-400 hover:text-gray-200 underline"
-              >
-                Déconnecter
-              </button>
-            </div>
+      {/*  /!* Connexion Strava *!/*/}
+      {/*  {!isAuthenticated ? (*/}
+      {/*    <div className="text-center">*/}
+      {/*      <p className="text-gray-300 mb-4">*/}
+      {/*        Ou connectez-vous pour voir vos activités récentes*/}
+      {/*      </p>*/}
+      {/*      <button*/}
+      {/*        onClick={() => stravaService.startAuth()}*/}
+      {/*        className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"*/}
+      {/*      >*/}
+      {/*        Connecter Strava*/}
+      {/*      </button>*/}
+      {/*    </div>*/}
+      {/*  ) : (*/}
+      {/*    <div>*/}
+      {/*      <div className="flex items-center justify-between mb-4">*/}
+      {/*        <span className="text-green-400 text-sm">✓ Connecté à Strava - Vos activités récentes</span>*/}
+      {/*        <button*/}
+      {/*          onClick={() => {*/}
+      {/*            stravaService.clearTokens()*/}
+      {/*            setIsAuthenticated(false)*/}
+      {/*            setActivities([])*/}
+      {/*          }}*/}
+      {/*          className="text-xs text-gray-400 hover:text-gray-200 underline"*/}
+      {/*        >*/}
+      {/*          Déconnecter*/}
+      {/*        </button>*/}
+      {/*      </div>*/}
 
-            <div>
-              <label className="block text-gray-300 mb-3">
-                Sélectionnez une activité :
-              </label>
+      {/*      <div>*/}
+      {/*        <label className="block text-gray-300 mb-3">*/}
+      {/*          Sélectionnez une activité :*/}
+      {/*        </label>*/}
 
-                {activities.length === 0 && !loadingActivities ? (
-                  <div className="text-center text-gray-400 py-8">
-                    Aucune activité de course trouvée
-                  </div>
-                ) : (
-                  <>
-                    <div className="space-y-3 max-h-96 overflow-y-auto">
-                      {activities.map((activity) => (
-                        <ActivityCard
-                          key={activity.id}
-                          activity={activity}
-                          onSelect={handleActivitySelect}
-                          disabled={loadingStrava}
-                        />
-                      ))}
+      {/*          {activities.length === 0 && !loadingActivities ? (*/}
+      {/*            <div className="text-center text-gray-400 py-8">*/}
+      {/*              Aucune activité de course trouvée*/}
+      {/*            </div>*/}
+      {/*          ) : (*/}
+      {/*            <>*/}
+      {/*              <div className="space-y-3 max-h-96 overflow-y-auto">*/}
+      {/*                {activities.map((activity) => (*/}
+      {/*                  <ActivityCard*/}
+      {/*                    key={activity.id}*/}
+      {/*                    activity={activity}*/}
+      {/*                    onSelect={handleActivitySelect}*/}
+      {/*                    disabled={loadingStrava}*/}
+      {/*                  />*/}
+      {/*                ))}*/}
 
-                      <InfiniteScrollLoader
-                        isLoading={loadingActivities}
-                        hasMore={hasMoreActivities}
-                        itemCount={activities.length}
-                        observerRef={observerTarget}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-          </div>
-        )}
-      </div>
+      {/*                <InfiniteScrollLoader*/}
+      {/*                  isLoading={loadingActivities}*/}
+      {/*                  hasMore={hasMoreActivities}*/}
+      {/*                  itemCount={activities.length}*/}
+      {/*                  observerRef={observerTarget}*/}
+      {/*                />*/}
+      {/*              </div>*/}
+      {/*            </>*/}
+      {/*          )}*/}
+      {/*        </div>*/}
+      {/*    </div>*/}
+      {/*  )}*/}
+      {/*</div>*/}
 
-      {error && (
-        <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
+      {/*{error && (*/}
+      {/*  <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">*/}
+      {/*    {error}*/}
+      {/*  </div>*/}
+      {/*)}*/}
 
-      {successMessage && (
-        <div className="bg-green-500/20 border border-green-500 text-green-200 px-4 py-3 rounded mb-4 flex items-center justify-between">
-          <span>{successMessage}</span>
-          <button
-            onClick={() => setSuccessMessage('')}
-            className="text-green-200 hover:text-green-100 ml-4"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+      {/*{successMessage && (*/}
+      {/*  <div className="bg-green-500/20 border border-green-500 text-green-200 px-4 py-3 rounded mb-4 flex items-center justify-between">*/}
+      {/*    <span>{successMessage}</span>*/}
+      {/*    <button*/}
+      {/*      onClick={() => setSuccessMessage('')}*/}
+      {/*      className="text-green-200 hover:text-green-100 ml-4"*/}
+      {/*    >*/}
+      {/*      ✕*/}
+      {/*    </button>*/}
+      {/*  </div>*/}
+      {/*)}*/}
 
-      {formattedText && (
-        <div className="mt-6">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-xl font-semibold">Résumé de la séance :</h3>
-            <div className="flex items-center gap-2">
-              <label
-                htmlFor="template-select"
-                className="text-sm text-gray-400"
-              >
-                Format :
-              </label>
-              <select
-                id="template-select"
-                value={selectedTemplate}
-                onChange={(e) =>
-                  handleTemplateChange(e.target.value as TemplateType)
-                }
-                className="bg-gray-700 text-white px-3 py-1 rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-sm"
-              >
-                {Object.entries(TEMPLATES).map(([key, template]) => (
-                  <option key={key} value={key}>
-                    {template.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+      {/*{formattedText && (*/}
+      {/*  <div className="mt-6">*/}
+      {/*    <div className="flex justify-between items-center mb-3">*/}
+      {/*      <h3 className="text-xl font-semibold">Résumé de la séance :</h3>*/}
+      {/*      <div className="flex items-center gap-2">*/}
+      {/*        <label*/}
+      {/*          htmlFor="template-select"*/}
+      {/*          className="text-sm text-gray-400"*/}
+      {/*        >*/}
+      {/*          Format :*/}
+      {/*        </label>*/}
+      {/*        <select*/}
+      {/*          id="template-select"*/}
+      {/*          value={selectedTemplate}*/}
+      {/*          onChange={(e) =>*/}
+      {/*            handleTemplateChange(e.target.value as TemplateType)*/}
+      {/*          }*/}
+      {/*          className="bg-gray-700 text-white px-3 py-1 rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-sm"*/}
+      {/*        >*/}
+      {/*          {Object.entries(TEMPLATES).map(([key, template]) => (*/}
+      {/*            <option key={key} value={key}>*/}
+      {/*              {template.label}*/}
+      {/*            </option>*/}
+      {/*          ))}*/}
+      {/*        </select>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
 
-          {sessionTitle && (
-            <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">
-                Titre de la séance :
-              </label>
-              <div className="bg-gray-800 p-3 rounded-lg">
-                <p className="text-gray-100 font-semibold">{sessionTitle}</p>
-              </div>
-            </div>
-          )}
+      {/*    {sessionTitle && (*/}
+      {/*      <div className="mb-4">*/}
+      {/*        <label className="block text-sm text-gray-400 mb-2">*/}
+      {/*          Titre de la séance :*/}
+      {/*        </label>*/}
+      {/*        <div className="bg-gray-800 p-3 rounded-lg">*/}
+      {/*          <p className="text-gray-100 font-semibold">{sessionTitle}</p>*/}
+      {/*        </div>*/}
+      {/*      </div>*/}
+      {/*    )}*/}
 
-          {selectedTemplate === 'custom' && (
-            <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-2">
-                Template personnalisé :
-                <span className="ml-2 text-xs">
-                  Variables : {'{countPrefix}'}, {'{count}'}, {'{distance}'},{' '}
-                  {'{times}'}, {'{paces}'}, {'{avgPace}'}, {'{recBetween}'},{' '}
-                  {'{recAfter}'}
-                </span>
-              </label>
-              <textarea
-                value={customTemplate}
-                onChange={(e) => {
-                  const newTemplate = e.target.value
-                  setCustomTemplate(newTemplate)
-                  if (intervalSets.length > 0) {
-                    const text = IntervalService.generateFormattedText(
-                      intervalSets,
-                      newTemplate
-                    )
-                    setFormattedText(text)
-                  }
-                }}
-                rows={3}
-                className="w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-sm font-mono"
-                placeholder="Ex: {count} x {distance}m | {times} | {paces}/km"
-              />
-            </div>
-          )}
+      {/*    {selectedTemplate === 'custom' && (*/}
+      {/*      <div className="mb-4">*/}
+      {/*        <label className="block text-sm text-gray-400 mb-2">*/}
+      {/*          Template personnalisé :*/}
+      {/*          <span className="ml-2 text-xs">*/}
+      {/*            Variables : {'{countPrefix}'}, {'{count}'}, {'{distance}'},{' '}*/}
+      {/*            {'{times}'}, {'{paces}'}, {'{avgPace}'}, {'{recBetween}'},{' '}*/}
+      {/*            {'{recAfter}'}*/}
+      {/*          </span>*/}
+      {/*        </label>*/}
+      {/*        <textarea*/}
+      {/*          value={customTemplate}*/}
+      {/*          onChange={(e) => {*/}
+      {/*            const newTemplate = e.target.value*/}
+      {/*            setCustomTemplate(newTemplate)*/}
+      {/*            if (intervalSets.length > 0) {*/}
+      {/*              const text = IntervalService.generateFormattedText(*/}
+      {/*                intervalSets,*/}
+      {/*                newTemplate*/}
+      {/*              )*/}
+      {/*              setFormattedText(text)*/}
+      {/*            }*/}
+      {/*          }}*/}
+      {/*          rows={3}*/}
+      {/*          className="w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-sm font-mono"*/}
+      {/*          placeholder="Ex: {count} x {distance}m | {times} | {paces}/km"*/}
+      {/*        />*/}
+      {/*      </div>*/}
+      {/*    )}*/}
 
-          <div className="mb-4">
-            <label className="block text-sm text-gray-400 mb-2">
-              Détails :
-            </label>
-            <div className="bg-gray-800 p-4 rounded-lg">
-              <pre className="whitespace-pre-wrap text-gray-100 font-mono">
-                {formattedText}
-                <br />
-                made by runningtools.fr
-              </pre>
-            </div>
-          </div>
+      {/*    <div className="mb-4">*/}
+      {/*      <label className="block text-sm text-gray-400 mb-2">*/}
+      {/*        Détails :*/}
+      {/*      </label>*/}
+      {/*      <div className="bg-gray-800 p-4 rounded-lg">*/}
+      {/*        <pre className="whitespace-pre-wrap text-gray-100 font-mono">*/}
+      {/*          {formattedText}*/}
+      {/*          <br />*/}
+      {/*          made by runningtools.fr*/}
+      {/*        </pre>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
 
-          <div className="flex gap-3">
-            {currentActivityId && isAuthenticated ? (
-              <>
-                <button
-                  onClick={handleUpdateActivity}
-                  disabled={updatingActivity}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
-                >
-                  {updatingActivity ? 'Mise à jour...' : '🚀 Mettre à jour sur Strava'}
-                </button>
-                <button
-                  onClick={copyToClipboard}
-                  className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-                >
-                  📋 Copier
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={copyToClipboard}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-              >
-                📋 Copier pour Strava
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      {/*    <div className="flex gap-3">*/}
+      {/*      {currentActivityId && isAuthenticated ? (*/}
+      {/*        <>*/}
+      {/*          <button*/}
+      {/*            onClick={handleUpdateActivity}*/}
+      {/*            disabled={updatingActivity}*/}
+      {/*            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"*/}
+      {/*          >*/}
+      {/*            {updatingActivity ? 'Mise à jour...' : '🚀 Mettre à jour sur Strava'}*/}
+      {/*          </button>*/}
+      {/*          <button*/}
+      {/*            onClick={copyToClipboard}*/}
+      {/*            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"*/}
+      {/*          >*/}
+      {/*            📋 Copier*/}
+      {/*          </button>*/}
+      {/*        </>*/}
+      {/*      ) : (*/}
+      {/*        <button*/}
+      {/*          onClick={copyToClipboard}*/}
+      {/*          className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"*/}
+      {/*        >*/}
+      {/*          📋 Copier pour Strava*/}
+      {/*        </button>*/}
+      {/*      )}*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*)}*/}
 
       {/*{intervalSets.length > 0 && (*/}
       {/*  <div className="mt-8">*/}
