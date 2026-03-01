@@ -20,6 +20,7 @@ export function EquivalentPage() {
     distance: 0,
     time: defaultTime,
   })
+  const [showInfo, setShowInfo] = useState(false)
 
   const updateTimes = (
     newPurdyPoint: number,
@@ -61,10 +62,52 @@ export function EquivalentPage() {
   }
 
   return (
-    // <div className={"main-container max-w-2xl"}>
     <MainContainer maxWidth="550px">
-      <h2>Page equivalence de performance</h2>
-
+      <div className={'flex justify-between items-center'}>
+        <h2>Page equivalence de performance</h2>
+        <div className="relative">
+          <button
+            onClick={() => setShowInfo(!showInfo)}
+            aria-label="Informations sur le calcul"
+            className="flex h-6 w-6 items-center justify-center rounded-full border border-gray-400 text-sm font-bold text-gray-400 hover:border-white hover:text-white transition-colors cursor-pointer"
+          >
+            i
+          </button>
+          {showInfo && (
+            <>
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowInfo(false)}
+              />
+              <div
+                className="absolute right-0 top-8 z-20 w-72 rounded-lg p-4 text-sm text-gray-100 shadow-xl border border-gray-600"
+                style={{ backgroundColor: 'var(--body-bg-color)' }}
+              >
+                <p className="font-bold mb-2 text-white">
+                  Calcul de l'équivalence
+                </p>
+                <p className="mb-2">
+                  L'équivalence est basée sur les{' '}
+                  <span className="font-semibold text-white">Points Purdy</span>
+                </p>
+                <p className="mb-2">
+                  Les autres méthodes de comparaison (par la vo2 max avec vdot
+                  par exemple) propose des chronos souvent trop ambitieux
+                  longues distances, ou simplement imprécis.
+                </p>
+                <p>
+                  la méthode{' '}
+                  <span className="font-semibold text-white">Points Purdy</span>{' '}
+                  montre des résultats plus équilibrés en se basant sur les records du monde de chaque distance. D'un
+                  point de vu scientifique, plusieurs articles utilise cette
+                  méthode comme base de références
+                  : <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4919094/">https://pmc.ncbi.nlm.nih.gov/articles/PMC4919094/</a>
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
       <table className={'custom-table'}>
         <thead>
           <tr className={'font-extrabold'}>
