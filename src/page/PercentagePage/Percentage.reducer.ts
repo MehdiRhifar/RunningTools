@@ -69,7 +69,6 @@ export const percentageReducer = (
       const newSpeedPercent = calculateSpeedPercent(newPercent, state.speed)
       return {
         ...state,
-        percent: newPercent,
         pacePercent: newPacePercent,
         speedPercent: newSpeedPercent,
         timeForDist: toTime(state.distance, newPacePercent),
@@ -82,7 +81,6 @@ export const percentageReducer = (
       const newSpeedPercent = calculateSpeedPercent(state.percent, newSpeed)
       return {
         ...state,
-        pace: action.payload,
         pacePercent: newPacePercent,
         speed: newSpeed,
         speedPercent: newSpeedPercent,
@@ -96,7 +94,6 @@ export const percentageReducer = (
       const newPacePercent = calculatePacePercent(state.percent, newPace)
       return {
         ...state,
-        speed: newSpeed,
         speedPercent: newSpeedPercent,
         pace: newPace,
         pacePercent: newPacePercent,
