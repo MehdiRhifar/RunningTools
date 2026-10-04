@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { parseIntSafe } from '../Utils/Utils.tsx'
+import { caretToStartIfEmpty, parseIntSafe } from '../Utils/Utils.tsx'
 import { defaultPace, Pace, paceToString } from '../interface/Pace.tsx'
 import { maskitoWithPlaceholder } from '@maskito/kit'
 import { useMaskito } from '@maskito/react'
@@ -52,6 +52,8 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
       <input
         className={className}
         onInput={onInputChange}
+        onFocus={caretToStartIfEmpty}
+        onClick={caretToStartIfEmpty}
         ref={maskedInputRef}
         inputMode="numeric"
         value={paceStr}

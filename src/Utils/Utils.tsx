@@ -1,3 +1,4 @@
+import type React from 'react'
 import { Pace } from '../interface/Pace.tsx'
 import { Time } from '../interface/Time.tsx'
 
@@ -11,6 +12,17 @@ export const parseNumberSafe = (str: string): number => {
       .replaceAll(thousandsSeparatorSymbol, '')
       .replaceAll(decimalSeparatorSymbol, '.')
   )
+}
+
+// Champs de saisie préremplis (00:00:00) : au focus, curseur au début pour pouvoir taper
+// directement. Une valeur déjà saisie n'est pas touchée. requestAnimationFrame car les
+// navigateurs placent le curseur après l'événement focus.
+export const caretToStartIfEmpty = (
+  event: React.SyntheticEvent<HTMLInputElement>
+) => {
+  const input = event.currentTarget
+  if (!/^[0:.'"]*$/.test(input.value)) return
+  requestAnimationFrame(() => input.setSelectionRange(0, 0))
 }
 
 export function formatTime(value: number) {
