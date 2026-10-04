@@ -1,3 +1,4 @@
+import type React from 'react'
 import { Pace } from '../interface/Pace.tsx'
 import { Time } from '../interface/Time.tsx'
 
@@ -92,3 +93,12 @@ export const getKeys = Object.keys as <T extends object>(
 ) => Array<keyof T>
 
 // Fonction pour obtenir la valeur numérique d'une variable CSS
+
+// Sélectionne tout le champ au focus : on peut retaper directement par-dessus.
+// requestAnimationFrame car les navigateurs mobiles placent le curseur après l'événement focus.
+export const selectAllOnFocus = (
+  event: React.FocusEvent<HTMLInputElement>
+) => {
+  const input = event.currentTarget
+  requestAnimationFrame(() => input.select())
+}

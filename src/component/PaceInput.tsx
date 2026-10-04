@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { parseIntSafe } from '../Utils/Utils.tsx'
+import { parseIntSafe, selectAllOnFocus } from '../Utils/Utils.tsx'
 import { defaultPace, Pace, paceToString } from '../interface/Pace.tsx'
 import { maskitoWithPlaceholder } from '@maskito/kit'
 import { useMaskito } from '@maskito/react'
@@ -11,6 +11,16 @@ interface OnPaceChange {
   className?: string
 }
 
+const { postprocessors } = maskitoWithPlaceholder(`00'00"`, false)
+
+// Constante de module : Maskito ne doit pas être recréé à chaque rendu
+const paceMaskOptions: MaskitoOptions = {
+  mask: [/[0-9]/, /[0-9]/, "'", /[0-5]/, /[0-9]/, '"'],
+  overwriteMode: 'replace',
+  preprocessors: [],
+  postprocessors: [...postprocessors],
+}
+
 export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
   const [paceStr, setPaceStr] = useState(paceToString(defaultPace))
 
@@ -20,20 +30,7 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
     }
   }, [pace])
 
-  const {
-    plugins, // plugins keeps caret inside actual value and remove placeholder on blur
-    ...placeholderOptions
-    // pass 'true' as second argument to add plugin to hide placeholder when input is not focused
-  } = maskitoWithPlaceholder('00\u002200\u0027', false)
-
-  const optionWithPlace = {
-    mask: [/[0-9]/, /[0-9]/, '"', /[0-5]/, /[0-9]/, "'"],
-    overwriteMode: 'replace',
-    preprocessors: [],
-    postprocessors: [...placeholderOptions.postprocessors],
-  } as MaskitoOptions
-
-  const maskedInputRef = useMaskito({ options: optionWithPlace })
+  const maskedInputRef = useMaskito({ options: paceMaskOptions })
 
   const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPaceStr(event.target.value)
@@ -43,9 +40,9 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
       return
     }
 
-    const value = event.target.value.replace("'", '')
-    const timeSplit = value.split('"')
-    const [minutes, seconds] = timeSplit.map(parseIntSafe)
+    const value = event.target.value.replace('"', '')
+    const timeSplit = value.split("'")
+    const [minutes = 0, seconds = 0] = timeSplit.map(parseIntSafe)
     const pace2: Pace = { minutes: minutes, seconds: seconds, milliseconds: 0 }
     onTimeChange(pace2)
   }
@@ -55,7 +52,9 @@ export function PaceInput({ onTimeChange, pace, className }: OnPaceChange) {
       <input
         className={className}
         onInput={onInputChange}
+        onFocus={selectAllOnFocus}
         ref={maskedInputRef}
+        inputMode="numeric"
         value={paceStr}
       />
     </>

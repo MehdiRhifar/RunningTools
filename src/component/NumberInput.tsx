@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import {
   decimalSeparatorSymbol,
   parseNumberSafe,
@@ -14,9 +14,8 @@ interface NumberInputProps {
   className?: string
   min?: number
   max?: number
-  precision?: number
   decimalPseudoSeparators?: string[]
-  decimalZeroPadding?: boolean
+  minimumFractionDigits?: number
   prefix?: string
   postfix?: string
 }
@@ -35,7 +34,10 @@ export function NumberInput({
     }
     if (propsValue != parseNumberSafe(numberStr)) {
       // Changement de l'exterieur
-      setNumberStr(propsValue.toLocaleString() + numberInputProps.postfix)
+      setNumberStr(
+        propsValue.toLocaleString(undefined, { maximumFractionDigits: 9 }) +
+          (numberInputProps.postfix ?? '')
+      )
     }
   }, [propsValue])
 
@@ -54,30 +56,29 @@ export function NumberInput({
     }
   }
 
-  const numberOptionsBase = maskitoNumberOptionsGenerator({
-    min: numberInputProps.min,
-    max: numberInputProps.max,
-    decimalPseudoSeparators: numberInputProps.decimalPseudoSeparators,
-    decimalZeroPadding: numberInputProps.decimalZeroPadding,
-    prefix: numberInputProps.prefix,
-    postfix: numberInputProps.postfix,
-    decimalSeparator: decimalSeparatorSymbol,
-    thousandSeparator: thousandsSeparatorSymbol,
-    precision: 9,
-  })
-  const getPlugins = () => {
-    const plugins = [...numberOptionsBase.plugins]
-    if (numberInputProps.postfix != undefined) {
-      const length = numberInputProps.postfix.length
+  const { min, max, decimalPseudoSeparators, minimumFractionDigits, prefix, postfix } =
+    numberInputProps
+
+  // Options stables : un nouvel objet à chaque rendu recréerait Maskito à chaque frappe
+  const numberOptions = useMemo(() => {
+    const base = maskitoNumberOptionsGenerator({
+      min,
+      max,
+      decimalPseudoSeparators,
+      minimumFractionDigits,
+      prefix,
+      postfix,
+      decimalSeparator: decimalSeparatorSymbol,
+      thousandSeparator: thousandsSeparatorSymbol,
+      maximumFractionDigits: 9,
+    })
+    const plugins = [...base.plugins]
+    if (postfix != undefined) {
+      const length = postfix.length
       plugins.push(maskitoCaretGuard((value) => [0, value.length - length]))
     }
-
-    return plugins
-  }
-  const numberOptions = {
-    ...numberOptionsBase,
-    plugins: getPlugins(),
-  } as MaskitoOptions
+    return { ...base, plugins } as MaskitoOptions
+  }, [min, max, decimalPseudoSeparators, minimumFractionDigits, prefix, postfix])
 
   const getClassName = () => {
     return numberInputProps.className ? numberInputProps.className : ''
@@ -90,6 +91,7 @@ export function NumberInput({
         placeholder={'0' + (numberInputProps.postfix ?? '')}
         className={'custom-input ' + getClassName()}
         ref={maskedInputRef}
+        inputMode="decimal"
         value={numberStr}
         onInput={handleNumberChange}
       />

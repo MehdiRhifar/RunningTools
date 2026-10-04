@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { parseIntSafe } from '../Utils/Utils.tsx'
+import { parseIntSafe, selectAllOnFocus } from '../Utils/Utils.tsx'
 import { defaultTime, Time, timeToString } from '../interface/Time.tsx'
 
 import { useMaskito } from '@maskito/react'
@@ -26,20 +26,24 @@ export function TimeInput({ onTimeChange, timeChanged }: OnTimeChange) {
   }, [timeChanged])
 
   useEffect(() => {
-    setTime({...time, milliseconds: 0})
-    setTimeStr(timeToString(time, isMillisecondsMode))
+    const newTime = { ...time, milliseconds: 0 }
+    setTime(newTime)
+    setTimeStr(timeToString(newTime, isMillisecondsMode))
+    onTimeChange(newTime)
   }, [isMillisecondsMode])
 
 
   const parseTimeFromInput = (value: string, isMillisecondsMode: boolean): Time => {
-    const [hours_str, minutes_str, seconds_milliseconds] = value.split(':')
+    const [hours_str = '', minutes_str = '', seconds_milliseconds = ''] =
+      value.split(':')
     const hours = parseIntSafe(hours_str)
     const minutes = parseIntSafe(minutes_str)
 
     if (isMillisecondsMode) {
-      const [seconds, milliseconds] = seconds_milliseconds
-        .split('.')
-        .map(parseIntSafe)
+      const [secondsStr = '', millisecondsStr = ''] =
+        seconds_milliseconds.split('.')
+      const seconds = parseIntSafe(secondsStr)
+      const milliseconds = parseIntSafe(millisecondsStr)
       return { hours, minutes, seconds, milliseconds: milliseconds * 10 }
     } else {
       const seconds = parseIntSafe(seconds_milliseconds)
@@ -91,8 +95,10 @@ export function TimeInput({ onTimeChange, timeChanged }: OnTimeChange) {
       <input
         className={'custom-input'}
         ref={maskedInputRef}
+        inputMode="numeric"
         value={timeStr}
         onInput={onInputChange}
+        onFocus={selectAllOnFocus}
         placeholder={placeholder}
       />
     </>
