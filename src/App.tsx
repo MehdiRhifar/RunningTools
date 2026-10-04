@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import { NavBar, routesConfig } from './component/NavBar/NavBar.tsx'
 import { MillisecondsProvider } from './contexts/MillisecondsContext.tsx'
 import PageNotFound from './page/PageNotFound.tsx'
+import { InstallPrompt } from './component/InstallPrompt.tsx'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           ))}
           <Route path="*" element={<PageNotFound />} />
         </Routes>
+        <InstallPrompt />
       </MillisecondsProvider>
     </>
   )
