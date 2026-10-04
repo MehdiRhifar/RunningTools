@@ -5,7 +5,6 @@ import { EquivalentPage } from '../../page/EquivalentPage/EquivalentPage.tsx'
 import './NavBar.css'
 import './Toggle.css'
 import { BaremePage } from '../../page/BaremePage/BaremePage.tsx'
-import { FitParserPage } from '../../page/FitParserPage/FitParserPage.tsx'
 import { useMilliseconds } from '../../contexts/MillisecondsContext.tsx'
 import { useState } from 'react'
 
@@ -29,11 +28,6 @@ export const routesConfig = [
     path: '/bareme',
     label: 'Bareme',
     component: <BaremePage></BaremePage>,
-  },
-  {
-    path: '/strava-analysis',
-    label: 'Analyse Strava',
-    component: <FitParserPage></FitParserPage>,
   },
 ]
 
