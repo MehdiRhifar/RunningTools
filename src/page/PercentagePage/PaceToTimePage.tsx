@@ -16,6 +16,7 @@ export function PaceToTimePage() {
   const [state, dispatch] = useReducer(percentageReducer, {
     percent: 100,
     pace: defaultPace,
+    basePace: defaultPace,
     pacePercent: defaultPace,
     speedPercent: 0,
     speed: 0,
@@ -42,7 +43,6 @@ export function PaceToTimePage() {
 
   return (
     <MainContainer>
-      <title>percentage</title>
         <h2>{'Calcul du temps pour une allure donnée'}</h2>
         <div>
           <NumberInput

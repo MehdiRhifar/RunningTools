@@ -11,7 +11,8 @@ import { Time } from '../../interface/Time.tsx'
 
 export interface PercentagePageState {
   percent: number
-  pace: Pace
+  pace: Pace // Valeur affichée dans le champ allure (synchronisée depuis l'extérieur)
+  basePace: Pace // Allure de référence (100 %) utilisée pour les calculs
   pacePercent: Pace
   speed: number
   speedPercent: number
@@ -65,8 +66,11 @@ export const percentageReducer = (
   switch (action.type) {
     case PercentageActionType.SET_PERCENT: {
       const newPercent = action.payload
-      const newPacePercent = calculatePacePercent(newPercent, state.pace)
-      const newSpeedPercent = calculateSpeedPercent(newPercent, state.speed)
+      const newPacePercent = calculatePacePercent(newPercent, state.basePace)
+      const newSpeedPercent = calculateSpeedPercent(
+        newPercent,
+        toSpeed(state.basePace)
+      )
       return {
         ...state,
         pacePercent: newPacePercent,
@@ -77,10 +81,13 @@ export const percentageReducer = (
     case PercentageActionType.SET_PACE: {
       const newPace = action.payload
       const newPacePercent = calculatePacePercent(state.percent, newPace)
-      const newSpeed = Number(toSpeed(newPace).toFixed(2))
-      const newSpeedPercent = calculateSpeedPercent(state.percent, newSpeed)
+      // La vitesse affichée est arrondie, mais les calculs partent de la valeur exacte
+      const exactSpeed = toSpeed(newPace)
+      const newSpeed = Number(exactSpeed.toFixed(2))
+      const newSpeedPercent = calculateSpeedPercent(state.percent, exactSpeed)
       return {
         ...state,
+        basePace: newPace,
         pacePercent: newPacePercent,
         speed: newSpeed,
         speedPercent: newSpeedPercent,
@@ -96,6 +103,7 @@ export const percentageReducer = (
         ...state,
         speedPercent: newSpeedPercent,
         pace: newPace,
+        basePace: newPace,
         pacePercent: newPacePercent,
         timeForDist: toTime(state.distance, newPacePercent),
       }
