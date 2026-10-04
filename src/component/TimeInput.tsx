@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { parseIntSafe, selectAllOnFocus } from '../Utils/Utils.tsx'
+import { parseIntSafe } from '../Utils/Utils.tsx'
 import { defaultTime, Time, timeToString } from '../interface/Time.tsx'
 
 import { useMaskito } from '@maskito/react'
@@ -98,7 +98,6 @@ export function TimeInput({ onTimeChange, timeChanged }: OnTimeChange) {
         inputMode="numeric"
         value={timeStr}
         onInput={onInputChange}
-        onFocus={selectAllOnFocus}
         placeholder={placeholder}
       />
     </>
