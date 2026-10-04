@@ -60,8 +60,14 @@
     transition: color 0.3s;
 }
 
-.navbar-item:hover .navbar-link {
-    color: #00f;
+.navbar-link.active {
+    color: #dd8f93;
+}
+
+@media (hover: hover) {
+    .navbar-item:hover .navbar-link {
+        color: #dd8f93;
+    }
 }
 
 
@@ -86,18 +92,33 @@
         padding: 1em 2em;
     }
 
-    /* Burger visible sur mobile */
+    /* Burger : au-dessus du panneau pour rester cliquable (croix de fermeture) */
     .hamburger {
+        position: relative;
+        z-index: 1002;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: space-between;
         width: 30px;
         height: 24px;
+        box-sizing: content-box;
         background: transparent;
         border: none;
         cursor: pointer;
-        padding: 0;
-        z-index: 1001;
+        /* Zone tactile agrandie sans bouger le dessin */
+        padding: 12px;
+        margin: -12px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Pas d'anneau de focus après un tap ; contour discret seulement au clavier */
+    .hamburger:focus {
+        outline: none;
+    }
+
+    .hamburger:focus-visible {
+        outline: 2px solid #dd8f93;
+        border-radius: 8px;
     }
 
     .hamburger span {
@@ -106,11 +127,12 @@
         width: 100%;
         background: #fff;
         border-radius: 3px;
-        transition: all 0.3s linear;
+        transition: transform 0.3s ease, opacity 0.2s ease;
     }
 
+    /* Centres des barres à 1.5px / 12px / 22.5px : décalage de 10.5px pour former la croix */
     .hamburger.active span:first-child {
-        transform: rotate(40deg)
+        transform: translateY(10.5px) rotate(45deg);
     }
 
     .hamburger.active span:nth-child(2) {
@@ -118,37 +140,41 @@
     }
 
     .hamburger.active span:nth-child(3) {
-        transform: rotate(-40deg)
+        transform: translateY(-10.5px) rotate(-45deg);
     }
 
+    /* Panneau latéral, masqué (et non focusable) tant qu'il est fermé */
     .navbar-menu {
         position: fixed;
         top: 0;
-        right: 0; /* Caché par défaut */
-
-        width: 280px;
+        right: 0;
+        width: min(80vw, 300px);
         height: 100vh;
+        height: 100dvh; /* Évite le débordement sous la barre d'adresse mobile */
         background: #232323;
+        box-shadow: -4px 0 16px rgba(0, 0, 0, 0.5);
         flex-direction: column;
         padding: 80px 0 20px;
         transform: translateX(100%);
-        transition: transform 0.3s ease;
-
+        visibility: hidden;
+        transition: transform 0.3s ease, visibility 0s linear 0.3s;
         z-index: 1000;
         overflow-y: auto;
         overflow-x: hidden;
+        overscroll-behavior: contain;
     }
-    /* Menu mobile - sidebar */
 
     .navbar-menu.active {
-        transform: translateX(0); /* Visible quand actif */
+        transform: translateX(0);
+        visibility: visible;
+        transition: transform 0.3s ease, visibility 0s;
     }
 
     /* Items mobile */
     .navbar-item {
         border-right: none;
         border-bottom: 1px solid #555;
-        padding: 1.5em 2em;
+        padding: 0;
         width: 100%;
     }
 
@@ -156,30 +182,50 @@
         border-bottom: none;
     }
 
-    /* Overlay mobile */
+    /* Lien sur toute la ligne : grande zone tactile */
+    .navbar-link {
+        display: block;
+        padding: 1.2em 2em;
+    }
+
+    .navbar-link.active {
+        background: rgba(221, 143, 147, 0.12);
+        box-shadow: inset 4px 0 0 #dd8f93;
+    }
+
+    .navbar-toggle {
+        padding: 1.2em 2em;
+    }
+
+    /* Overlay : toujours dans le DOM, fondu à l'ouverture */
     .navbar-overlay {
         display: block;
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
+        inset: 0;
         background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
         z-index: 999;
+    }
+
+    .navbar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
     }
 }
 
 /* ===== ANIMATIONS MOBILES ===== */
 @media (max-width: 768px) {
     .navbar-menu.active .navbar-item {
-        animation: slideInFromRight 0.3s ease-out forwards;
+        animation: slideInFromRight 0.3s ease-out both;
     }
 
-    .navbar-menu.active .navbar-item:nth-child(1) { animation-delay: 0s; }
+    .navbar-menu.active .navbar-item:nth-child(1) { animation-delay: 0.05s; }
     .navbar-menu.active .navbar-item:nth-child(2) { animation-delay: 0.1s; }
-    .navbar-menu.active .navbar-item:nth-child(3) { animation-delay: 0.2s; }
-    .navbar-menu.active .navbar-item:nth-child(4) { animation-delay: 0.3s; }
-    .navbar-menu.active .navbar-item:nth-child(5) { animation-delay: 0.4s; }
+    .navbar-menu.active .navbar-item:nth-child(3) { animation-delay: 0.15s; }
+    .navbar-menu.active .navbar-item:nth-child(4) { animation-delay: 0.2s; }
+    .navbar-menu.active .navbar-item:nth-child(5) { animation-delay: 0.25s; }
 }
 
 @keyframes slideInFromRight {
@@ -190,5 +236,17 @@
     to {
         opacity: 1;
         transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar-menu,
+    .navbar-overlay,
+    .hamburger span {
+        transition: none;
+    }
+
+    .navbar-menu.active .navbar-item {
+        animation: none;
     }
 }
